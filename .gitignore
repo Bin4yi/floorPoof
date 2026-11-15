@@ -9,3 +9,4 @@ spikes/day1/package-lock.json
 frontend/dist/
 spikes/try_*.py
 docs/reproduce.json
+frontend/tsconfig.tsbuildinfo
