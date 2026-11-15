@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 4 sewing machines to Line C",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:25",
+ "calls": [
+  {
+   "hash": "cfcaf9b3fdc4600a",
+   "response": "{\"layouts\": [{\"note\": \"Line C extended east of cross-aisle, 4 machines after C8\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 36, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 40, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 44, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}]}, {\"note\": \"same positions using DB-X2 to balance load\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 36, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 40, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 44, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 6.85
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Remove sewing machine A8 from Line A",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:28",
+ "calls": [
+  {
+   "hash": "1aa209455f764087",
+   "response": "{\"layouts\": [{\"note\": \"Remove A8 as requested, Line A now ends at A7\", \"changes\": [{\"op\": \"remove\", \"id\": \"A8\"}]}]}",
+   "seconds": 2.17
+  }
+ ]
+}

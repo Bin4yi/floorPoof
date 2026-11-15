@@ -1,0 +1,19 @@
+{
+ "floor": "factory",
+ "request": "Put a packing table next to each of the two cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:09",
+ "calls": [
+  {
+   "hash": "e178db9ffa808621",
+   "response": "{\"layouts\": [{\"note\": \"place packing tables immediately north of each cutting table so operator front to south stays clear\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 34, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 42, \"y\": 0, \"rotation\": 0}]}]}",
+   "seconds": 5.59
+  },
+  {
+   "hash": "bb7c5b46885b63a3",
+   "response": "{\"layouts\": [{\"note\": \"packing west of CUT1 facing west, east of CUT2 facing east, keeps both work cells clear\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 32, \"y\": 2, \"rotation\": 270}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 48, \"y\": 2, \"rotation\": 90}]}]}",
+   "seconds": 8.82
+  }
+ ]
+}

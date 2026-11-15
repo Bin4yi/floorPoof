@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add 3 flammable liquid pallets to the hazmat staging area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:35:14",
+ "calls": [
+  {
+   "hash": "0529128a82ebaa75",
+   "response": "{\"layouts\": [{\"note\": \"Cluster new flammables with existing FL1/FL2 at south edge of hazmat staging to maximize distance from OX1/OX2\", \"changes\": [{\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 36, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 52, \"y\": 36, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 55, \"y\": 36, \"rotation\": 0}]}, {\"note\": \"Use bottom row y=37 for max oxidizer separation\", \"changes\": [{\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 34, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 56, \"y\": 37, \"rotation\": 0}]}, {\"note\": \"Compact block adjacent to existing flammables\", \"changes\": [{\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 34, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 36, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 57, \"y\": 36, \"rotation\": 0}]}]}",
+   "seconds": 6.1
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 4 pressing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:32:05",
+ "calls": [
+  {
+   "hash": "e5d24e0d7b7d17ba",
+   "response": "{\"layouts\": [{\"note\": \"Extend Line B east of cross aisle with 4 pressing machines using free panels DB-X1 and DB-X2\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Same extension with 1 cell shift to avoid cutting table alignment\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 37, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 42, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 47, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 10.19
+  }
+ ]
+}

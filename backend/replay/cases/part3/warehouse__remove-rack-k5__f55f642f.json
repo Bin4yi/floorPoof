@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Remove rack K5",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:53",
+ "calls": [
+  {
+   "hash": "2dd8cf9bd0f8121c",
+   "response": "{\"layouts\": [{\"note\": \"Remove K5 as requested\", \"changes\": [{\"op\": \"remove\", \"id\": \"K5\"}]}]}",
+   "seconds": 2.85
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 pressing machines in the finishing area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:27:56",
+ "calls": [
+  {
+   "hash": "4322c5d8e8613910",
+   "response": "{\"layouts\": [{\"note\": \"2 pressing in finishing, use DB-P2 and DB-X1 spare\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 87, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 87, \"y\": 32, \"rotation\": 0, \"panel\": \"DB-X1\"}]}, {\"note\": \"alternative spaced east, both on X drop boxes\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 83, \"y\": 32, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 87, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 9.76
+  }
+ ]
+}

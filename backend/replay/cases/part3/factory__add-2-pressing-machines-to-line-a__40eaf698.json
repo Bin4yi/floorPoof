@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 pressing machines to Line A",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:33:32",
+ "calls": [
+  {
+   "hash": "982c179bd863534a",
+   "response": "{\"layouts\": [{\"note\": \"Make room east of cross aisle for Line A pressing, use X1/X2 power\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 40, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 47, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 35, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Alt spacing avoids adjacency, both on high spare boxes\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 44, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 51, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 1, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 1, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X2\"}]}, {\"note\": \"If line step allows far east placement keep north area clear\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 38, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 46, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 5, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 35, \"y\": 5, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 9.74
+  }
+ ]
+}

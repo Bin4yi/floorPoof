@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Move rack K16 to a new spot",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:35:31",
+ "calls": [
+  {
+   "hash": "09f357ed42a769ac",
+   "response": "{\"layouts\": [{\"note\": \"Move K16 to gap between west and east rack blocks\", \"changes\": [{\"op\": \"move\", \"id\": \"K16\", \"x\": 28, \"y\": 2, \"rotation\": 90}]}, {\"note\": \"Move K16 to second row in same gap\", \"changes\": [{\"op\": \"move\", \"id\": \"K16\", \"x\": 28, \"y\": 9, \"rotation\": 90}]}, {\"note\": \"Move K16 to far west wall\", \"changes\": [{\"op\": \"move\", \"id\": \"K16\", \"x\": 6, \"y\": 2, \"rotation\": 90}]}]}",
+   "seconds": 10.87
+  }
+ ]
+}

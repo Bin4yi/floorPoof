@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add 4 pallet racks along the north wall",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:35:19",
+ "calls": [
+  {
+   "hash": "4db3e183f0000b15",
+   "response": "{\"layouts\": [{\"note\": \"4 racks along north wall y=0 avoiding forklift aisles 14-19 and 38-43\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 0, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 6, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 22, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 28, \"y\": 0, \"rotation\": 0}]}, {\"note\": \"4 racks east and west ends of north wall\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 0, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 6, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 52, \"y\": 0, \"rotation\": 0}]}, {\"note\": \"4 racks central north gap between forklift aisles\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 22, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 28, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 0, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 52, \"y\": 0, \"rotation\": 0}]}]}",
+   "seconds": 4.84
+  }
+ ]
+}

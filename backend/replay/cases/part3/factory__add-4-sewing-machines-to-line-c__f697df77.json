@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 4 sewing machines to Line C",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:24",
+ "calls": [
+  {
+   "hash": "cfcaf9b3fdc4600a",
+   "response": "{\"layouts\": [{\"note\": \"Continue Line C east of cross-aisle, 3 on DB-C and 1 on DB-X1 to stay within power\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 38, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 41, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}]}, {\"note\": \"Same positions using DB-P2 for 4th to keep SUB-N free\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 38, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 41, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-P2\"}]}, {\"note\": \"Spaced wider to ease exit walk, balanced power DB-C/DB-D/DB-X\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 36, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 40, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-D\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 44, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-X1\"}]}]}",
+   "seconds": 7.8
+  }
+ ]
+}

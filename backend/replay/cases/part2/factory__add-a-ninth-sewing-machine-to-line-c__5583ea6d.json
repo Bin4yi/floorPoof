@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add a ninth sewing machine to Line C",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:27:38",
+ "calls": [
+  {
+   "hash": "27d1bfd8070f3220",
+   "response": "{\"layouts\": [{\"note\": \"Line C ninth after cross aisle to keep aisle clear\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}]}, {\"note\": \"Alternative shift one cell east for more walk clearance\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 33, \"y\": 24, \"rotation\": 0, \"line\": \"C\", \"panel\": \"DB-C\"}]}]}",
+   "seconds": 7.67
+  }
+ ]
+}

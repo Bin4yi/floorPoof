@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 pressing machines to Line A",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:57",
+ "calls": [
+  {
+   "hash": "982c179bd863534a",
+   "response": "{\"layouts\": [{\"note\": \"Line A extended beyond cross aisle, cutting tables shifted east to keep aisle clear, presses on north spare boxes\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 45, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 52, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Same but presses at y=5 to reduce overlap risk\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 46, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 54, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 5, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 5, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Uses DB-P2 and DB-X1 for power diversity\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 45, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 52, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-P2\"}]}]}",
+   "seconds": 12.18
+  }
+ ]
+}

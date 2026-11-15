@@ -1,0 +1,53 @@
+
+Part 1: planted-bug layouts
+  unsafe layouts blocked: 18 of 20, safe layouts wrongly blocked: 0 of 10
+  not counted as blocked, rule number TBD: 2 (u16_sep_press_by_racks, u17_sep_press_moved)
+  check time per layout: mean 228 ms, max 338 ms
+  part 2 r01_factory: first_round
+  part 2 r02_factory: first_round
+  part 2 r03_factory: first_round
+  part 2 r04_factory: first_round
+  part 2 r05_factory: first_round
+  part 2 r06_factory: first_round
+  part 2 r07_factory: first_round
+  part 2 r08_factory: first_round
+  part 2 r09_factory: first_round
+  part 2 r10_factory: first_round
+  part 2 r11_factory: first_round
+  part 2 r12_factory: first_round
+  part 2 r13_factory: first_round
+  part 2 r14_factory: first_round
+  part 2 r15_factory: never (handed back to the user with the open problems: FP-PANEL: sub panel SUB-N 26.8 kW > limit 24.0 kW; main breaker MAIN 53.6 kW > limit 49.6 kW.)
+  part 2 r16_factory: after_retries
+  part 2 r17_factory: first_round
+  part 2 r18_factory: first_round
+  part 2 r19_factory: first_round
+  part 2 r20_factory: first_round
+  part 2 r21_warehouse: first_round
+  part 2 r22_warehouse: after_retries
+  part 2 r23_warehouse: after_retries
+  part 2 r24_warehouse: first_round
+  part 2 r25_warehouse: first_round
+  part 2 r26_warehouse: first_round
+  part 2 r27_warehouse: first_round
+  part 2 r28_warehouse: first_round
+  part 2 r29_warehouse: first_round
+  part 2 r30_warehouse: first_round
+
+Part 2: change requests through the full loop
+  requests run: 30 of 30 (model answers: replay)
+  passed on the first round: 26, passed after retries: 3, never solved: 1
+  average check time per layout: 187 ms over 81 layouts
+  NEVER r15_factory "Add 5 pressing machines anywhere on the floor": handed back to the user with the open problems: FP-PANEL: sub panel SUB-N 26.8 kW > limit 24.0 kW; main breaker MAIN 53.6 kW > limit 49.6 kW.
+
+Part 3: model alone against model plus checks (same requests)
+  model alone: 5 of 30 first layouts broke a rule (or were unusable)
+  BROKE r01_factory "Add 4 pressing machines to Line B": FP-PANEL
+  BROKE r07_factory "Add 2 more fabric racks in the fabric store": FP-EXIT-REACH
+  BROKE r15_factory "Add 5 pressing machines anywhere on the floor": FP-EXIT-REACH, FP-PANEL
+  BROKE r21_warehouse "Add 2 pallet racks in the empty area east of the east forklift aisle": WH-EXIT-REACH
+  BROKE r27_warehouse "Add 3 flammable liquid pallets to the hazmat staging area": WH-EXIT-REACH
+  model plus checks: 29 of 30 final layouts proven by the graph checks, 29 of 30 proven and doing what was asked; the rest handed back to the user
+  every layout shown by model plus checks passed the checks; unchecked, the model alone would have shown 5 rule-breaking layouts
+
+reproduce.py finished in 71 s

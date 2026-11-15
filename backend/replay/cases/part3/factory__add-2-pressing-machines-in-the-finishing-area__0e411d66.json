@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 pressing machines in the finishing area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:32:38",
+ "calls": [
+  {
+   "hash": "4322c5d8e8613910",
+   "response": "{\"layouts\": [{\"note\": \"Add 2 presses in finishing, using DB-P2 and DB-X1 spare capacity\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 86, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 86, \"y\": 32, \"rotation\": 0, \"panel\": \"DB-X1\"}]}, {\"note\": \"Alternate positions north row and south row offset\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 83, \"y\": 32, \"rotation\": 0, \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 90, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-X2\"}]}, {\"note\": \"Both on north side of finishing\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 86, \"y\": 26, \"rotation\": 180, \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 90, \"y\": 26, \"rotation\": 180, \"panel\": \"DB-X1\"}]}]}",
+   "seconds": 6.72
+  }
+ ]
+}

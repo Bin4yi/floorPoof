@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 sewing machines to Line A",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:27:30",
+ "calls": [
+  {
+   "hash": "fe73f9dc89f6eb0b",
+   "response": "{\"layouts\": [{\"note\": \"Make room east of cross aisle for 2 new Line A machines\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 38, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 46, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-A\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-A\"}]}, {\"note\": \"Shift cut tables further east, same A9 A10 positions\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 44, \"y\": 2, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"CUT2\", \"x\": 52, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-A\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 36, \"y\": 2, \"rotation\": 0, \"line\": \"A\", \"panel\": \"DB-A\"}]}]}",
+   "seconds": 8.4
+  }
+ ]
+}

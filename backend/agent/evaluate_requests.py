@@ -100,6 +100,10 @@ def run_parts(g: Graph, parts: list[int], mode: str = "auto") -> dict:
         else:
             broke = sum(1 for r in ran if r["status"] == "broke")
             print(f"  model alone: {broke} of {len(ran)} first layouts broke a rule (or were unusable)")
+            req = {c["id"]: c["request"] for c in cases}
+            for r in ran:
+                if r["status"] == "broke":
+                    print(f"  BROKE {r['id']} \"{req[r['id']]}\": {r['why']}")
             if "part2" in out:
                 p2 = [r for r in out["part2"]["rows"] if r["status"] != "not_run"]
                 proven = sum(1 for r in p2 if r["proven"])

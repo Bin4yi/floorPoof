@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add a third cutting table near the other cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:01",
+ "calls": [
+  {
+   "hash": "883505672a8fff69",
+   "response": "{\"layouts\": [{\"note\": \"add third table inline with existing cut tables\", \"changes\": [{\"op\": \"add\", \"type\": \"cutting_table\", \"x\": 50, \"y\": 2, \"rotation\": 0}]}, {\"note\": \"add third table just below CUT1\", \"changes\": [{\"op\": \"add\", \"type\": \"cutting_table\", \"x\": 34, \"y\": 6, \"rotation\": 0}]}, {\"note\": \"add third table below CUT2\", \"changes\": [{\"op\": \"add\", \"type\": \"cutting_table\", \"x\": 42, \"y\": 6, \"rotation\": 0}]}]}",
+   "seconds": 4.26
+  }
+ ]
+}

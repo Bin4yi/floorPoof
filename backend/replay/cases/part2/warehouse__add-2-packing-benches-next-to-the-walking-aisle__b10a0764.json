@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add 2 packing benches next to the walking aisle",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:31:55",
+ "calls": [
+  {
+   "hash": "84b7b0ecd5f65c88",
+   "response": "{\"layouts\": [{\"note\": \"2 benches just north of walk aisle, facing north so operator not in aisle\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 2, \"y\": 18, \"rotation\": 180}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 8, \"y\": 18, \"rotation\": 180}]}, {\"note\": \"2 benches just south of walk aisle, facing south\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 2, \"y\": 22, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 8, \"y\": 22, \"rotation\": 0}]}, {\"note\": \"one north one south of aisle\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 25, \"y\": 18, \"rotation\": 180}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 25, \"y\": 22, \"rotation\": 0}]}]}",
+   "seconds": 4.93
+  }
+ ]
+}

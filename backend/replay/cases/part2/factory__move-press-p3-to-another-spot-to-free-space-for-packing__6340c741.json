@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Move press P3 to another spot to free space for packing",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:31",
+ "calls": [
+  {
+   "hash": "9c01a443dda1cd18",
+   "response": "{\"layouts\": [{\"note\": \"Move P3 north to cluster with P1/P2 and free southern packing area\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 78, \"y\": 29, \"rotation\": 0, \"panel\": \"DB-P2\"}]}, {\"note\": \"Shift P3 east along same row to clear space at 78,32\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 83, \"y\": 32, \"rotation\": 0, \"panel\": \"DB-P2\"}]}, {\"note\": \"Group presses on north edge of finishing\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 87, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-P2\"}]}]}",
+   "seconds": 7.54
+  }
+ ]
+}

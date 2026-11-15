@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Remove fabric rack R1 and put a packing table in its place",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:33:14",
+ "calls": [
+  {
+   "hash": "43ccf40b309e1880",
+   "response": "{\"layouts\": [{\"note\": \"Remove R1 and add packing table at 87,1 same footprint\", \"changes\": [{\"op\": \"remove\", \"id\": \"R1\"}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 87, \"y\": 1, \"rotation\": 0}]}, {\"note\": \"Same replacement with 180 rotation to face aisle\", \"changes\": [{\"op\": \"remove\", \"id\": \"R1\"}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 87, \"y\": 1, \"rotation\": 180}]}]}",
+   "seconds": 6.3
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 more fabric racks in the fabric store",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:10",
+ "calls": [
+  {
+   "hash": "dedb891cec697e66",
+   "response": "{\"layouts\": [{\"note\": \"add 2 racks at bottom of fabric store with operator clearance\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 87, \"y\": 9, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 92, \"y\": 9, \"rotation\": 0}]}, {\"note\": \"same but one row lower to y=10\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 87, \"y\": 10, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 92, \"y\": 10, \"rotation\": 0}]}, {\"note\": \"stack along east side\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 86, \"y\": 9, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 91, \"y\": 9, \"rotation\": 0}]}]}",
+   "seconds": 7.57
+  }
+ ]
+}

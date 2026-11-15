@@ -1,0 +1,19 @@
+{
+ "floor": "warehouse",
+ "request": "Add 2 oxidizer pallets to the hazmat staging area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:31:09",
+ "calls": [
+  {
+   "hash": "762ccc5c499fc51b",
+   "response": "{\"layouts\": [{\"note\": \"move flammables to south edge of staging to increase oxidizer separation, add 2 oxidizers north edge\", \"changes\": [{\"op\": \"move\", \"id\": \"FL1\", \"x\": 52, \"y\": 37, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"FL2\", \"x\": 55, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 52, \"y\": 25, \"rotation\": 0}]}, {\"note\": \"cluster all oxidizers NW corner of staging, flammables SE corner\", \"changes\": [{\"op\": \"move\", \"id\": \"FL1\", \"x\": 57, \"y\": 37, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"FL2\", \"x\": 57, \"y\": 34, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"OX1\", \"x\": 50, \"y\": 25, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"OX2\", \"x\": 52, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 27, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 52, \"y\": 27, \"rotation\": 0}]}, {\"note\": \"max separation north-south within staging\", \"changes\": [{\"op\": \"move\", \"id\": \"FL1\", \"x\": 50, \"y\": 37, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"FL2\", \"x\": 53, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 56, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 56, \"y\": 27, \"rotation\": 0}]}]}",
+   "seconds": 6.57
+  },
+  {
+   "hash": "d81e3b57b9271a5b",
+   "response": "{\"layouts\": [{\"note\": \"add 2 oxidizers on top row offset so work cells clear\", \"changes\": [{\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 57, \"y\": 25, \"rotation\": 0}]}, {\"note\": \"move flammables to bottom to maximize separation, oxidizers top row\", \"changes\": [{\"op\": \"move\", \"id\": \"FL1\", \"x\": 50, \"y\": 37, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"FL2\", \"x\": 53, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 57, \"y\": 25, \"rotation\": 0}]}, {\"note\": \"spread oxidizers with vertical gap to keep work cells free\", \"changes\": [{\"op\": \"move\", \"id\": \"FL1\", \"x\": 57, \"y\": 36, \"rotation\": 0}, {\"op\": \"move\", \"id\": \"FL2\", \"x\": 57, \"y\": 33, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 25, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"oxidizer_pallet\", \"x\": 50, \"y\": 28, \"rotation\": 0}]}]}",
+   "seconds": 10.45
+  }
+ ]
+}

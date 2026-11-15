@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 fabric racks near the cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:11",
+ "calls": [
+  {
+   "hash": "dcf610c3d972a560",
+   "response": "{\"layouts\": [{\"note\": \"Add 2 racks just south of cutting tables clear of cross aisle and operator cells\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 34, \"y\": 6, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 40, \"y\": 6, \"rotation\": 0}]}, {\"note\": \"Alternate spacing to avoid operator overlap\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 34, \"y\": 7, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 40, \"y\": 7, \"rotation\": 0}]}, {\"note\": \"Side-by-side north row\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 50, \"y\": 2, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 50, \"y\": 5, \"rotation\": 0}]}]}",
+   "seconds": 3.5
+  }
+ ]
+}

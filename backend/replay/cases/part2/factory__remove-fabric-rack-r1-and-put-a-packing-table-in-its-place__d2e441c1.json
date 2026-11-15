@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Remove fabric rack R1 and put a packing table in its place",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:34",
+ "calls": [
+  {
+   "hash": "43ccf40b309e1880",
+   "response": "{\"layouts\": [{\"note\": \"Replace R1 with packing table at same spot\", \"changes\": [{\"op\": \"remove\", \"id\": \"R1\"}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 87, \"y\": 1, \"rotation\": 0}]}]}",
+   "seconds": 3.37
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Move packing bench PB2 closer to the east exit",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:35:00",
+ "calls": [
+  {
+   "hash": "f634d077dfd7e03d",
+   "response": "{\"layouts\": [{\"note\": \"move PB2 to y=5 close to east exit E at 59,5\", \"changes\": [{\"op\": \"move\", \"id\": \"PB2\", \"x\": 54, \"y\": 5, \"rotation\": 0}]}, {\"note\": \"PB2 even closer at 55,5\", \"changes\": [{\"op\": \"move\", \"id\": \"PB2\", \"x\": 55, \"y\": 5, \"rotation\": 0}]}, {\"note\": \"PB2 north but facing west toward exit\", \"changes\": [{\"op\": \"move\", \"id\": \"PB2\", \"x\": 52, \"y\": 3, \"rotation\": 0}]}]}",
+   "seconds": 6.16
+  }
+ ]
+}

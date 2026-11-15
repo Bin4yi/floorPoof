@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add 3 flammable liquid pallets to the hazmat staging area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:31:37",
+ "calls": [
+  {
+   "hash": "0529128a82ebaa75",
+   "response": "{\"layouts\": [{\"note\": \"Add 3 FL pallets in southernmost row of hazmat staging to maximize separation from OX pallets at y27\", \"changes\": [{\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 53, \"y\": 37, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 56, \"y\": 37, \"rotation\": 0}]}, {\"note\": \"Alternate spacing using y36 and y37 rows\", \"changes\": [{\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 36, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 50, \"y\": 38, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"flammable_pallet\", \"x\": 57, \"y\": 37, \"rotation\": 0}]}]}",
+   "seconds": 6.33
+  }
+ ]
+}

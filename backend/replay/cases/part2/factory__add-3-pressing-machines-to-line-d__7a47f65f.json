@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 3 pressing machines to Line D",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:29:14",
+ "calls": [
+  {
+   "hash": "91712bb1bf1c7d02",
+   "response": "{\"layouts\": [{\"note\": \"Add 3 pressing after D8, skip cross aisle x28..31, power on X panels with large spare\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Same positions, spread load to DB-P2 which still has 5.1 kW spare\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-P2\"}]}]}",
+   "seconds": 15.97
+  }
+ ]
+}

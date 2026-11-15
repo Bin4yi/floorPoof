@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Turn cutting table CUT1 so it faces north",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:16",
+ "calls": [
+  {
+   "hash": "86d6a4e67ab9d39f",
+   "response": "{\"layouts\": [{\"note\": \"Rotate CUT1 to face north (180) at same location\", \"changes\": [{\"op\": \"move\", \"id\": \"CUT1\", \"x\": 34, \"y\": 2, \"rotation\": 180}]}]}",
+   "seconds": 4.31
+  }
+ ]
+}

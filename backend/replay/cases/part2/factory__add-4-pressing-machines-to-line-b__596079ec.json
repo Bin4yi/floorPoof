@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 4 pressing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:27:20",
+ "calls": [
+  {
+   "hash": "e5d24e0d7b7d17ba",
+   "response": "{\"layouts\": [{\"note\": \"Line B extension east of cross-aisle, 4 presses after B8\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Spread load across SUB-F and SUB-N\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"Same positions using DB-P1 for one to test main breaker\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}]}]}",
+   "seconds": 9.96
+  }
+ ]
+}

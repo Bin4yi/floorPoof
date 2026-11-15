@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add a packing table in the finishing area",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:28:17",
+ "calls": [
+  {
+   "hash": "2b5c806b498c7c54",
+   "response": "{\"layouts\": [{\"note\": \"packing table in finishing near east side north of existing packing\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 90, \"y\": 26, \"rotation\": 0}]}, {\"note\": \"packing table far east in finishing\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 95, \"y\": 26, \"rotation\": 0}]}, {\"note\": \"packing table south-east in finishing\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 90, \"y\": 36, \"rotation\": 0}]}]}",
+   "seconds": 6.08
+  }
+ ]
+}

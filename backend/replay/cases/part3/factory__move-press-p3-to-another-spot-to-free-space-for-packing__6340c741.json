@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Move press P3 to another spot to free space for packing",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:33:07",
+ "calls": [
+  {
+   "hash": "9c01a443dda1cd18",
+   "response": "{\"layouts\": [{\"note\": \"Move P3 to SW corner of finishing to free central packing area\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 76, \"y\": 36, \"rotation\": 0, \"panel\": \"DB-P2\"}]}, {\"note\": \"Move P3 to east side of finishing\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 86, \"y\": 26, \"rotation\": 0, \"panel\": \"DB-P2\"}]}, {\"note\": \"Move P3 to SE area keeping operator inside floor\", \"changes\": [{\"op\": \"move\", \"id\": \"P3\", \"x\": 86, \"y\": 36, \"rotation\": 0, \"panel\": \"DB-P2\"}]}]}",
+   "seconds": 9.3
+  }
+ ]
+}

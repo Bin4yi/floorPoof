@@ -1,0 +1,19 @@
+{
+ "floor": "warehouse",
+ "request": "Add a packing bench near the other packing benches",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:51",
+ "calls": [
+  {
+   "hash": "0b4dc83c30e58c71",
+   "response": "{\"layouts\": [{\"note\": \"add bench between PB1 and PB2 at (52,10)\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 52, \"y\": 10, \"rotation\": 0}]}]}",
+   "seconds": 5.35
+  },
+  {
+   "hash": "598993e782bde4bc",
+   "response": "{\"layouts\": [{\"note\": \"add east of PB1 adjacent, work cell free\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 56, \"y\": 8, \"rotation\": 0}]}, {\"note\": \"add south of PB2 below cluster\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 52, \"y\": 16, \"rotation\": 0}]}, {\"note\": \"add west of cluster facing same direction\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 47, \"y\": 8, \"rotation\": 0}]}]}",
+   "seconds": 9.7
+  }
+ ]
+}

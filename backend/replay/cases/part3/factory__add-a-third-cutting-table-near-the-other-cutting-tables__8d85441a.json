@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add a third cutting table near the other cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:32:42",
+ "calls": [
+  {
+   "hash": "883505672a8fff69",
+   "response": "{\"layouts\": [{\"note\": \"Add CUT3 inline east of existing tables at 50,2\", \"changes\": [{\"op\": \"add\", \"type\": \"cutting_table\", \"x\": 50, \"y\": 2, \"rotation\": 0}]}]}",
+   "seconds": 3.06
+  }
+ ]
+}

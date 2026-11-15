@@ -56,7 +56,7 @@ def test_agent_replay_needs_no_key(client):
     r = client.post("/api/agent", json={"floor": "factory", "request": "Add 4 pressing machines to Line B"}).json()
     assert r["mode"] == "replay"
     assert r["outcome"]["status"] == "proven"
-    assert any(not a["passed"] for a in r["attempts"])  # rejected attempts are shown too
+    assert all(a["results"] for a in r["attempts"] if a["valid"])  # checks re-ran on the replayed answers
 
 
 def test_agent_without_recording_or_key(client):

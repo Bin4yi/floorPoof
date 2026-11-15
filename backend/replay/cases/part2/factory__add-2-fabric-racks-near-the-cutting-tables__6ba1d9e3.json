@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 2 fabric racks near the cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:14",
+ "calls": [
+  {
+   "hash": "dcf610c3d972a560",
+   "response": "{\"layouts\": [{\"note\": \"Add 2 fabric racks just south of cutting tables\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 34, \"y\": 6, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 39, \"y\": 6, \"rotation\": 0}]}, {\"note\": \"Alternative placement side-by-side further south to keep work cells clear\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 35, \"y\": 6, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 35, \"y\": 9, \"rotation\": 0}]}, {\"note\": \"Place east of second cutting table\", \"changes\": [{\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 49, \"y\": 2, \"rotation\": 90}, {\"op\": \"add\", \"type\": \"fabric_rack\", \"x\": 49, \"y\": 5, \"rotation\": 90}]}]}",
+   "seconds": 3.88
+  }
+ ]
+}

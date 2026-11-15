@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 3 sewing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:33:21",
+ "calls": [
+  {
+   "hash": "91eefe1a3decafe2",
+   "response": "{\"layouts\": [{\"note\": \"add 3 after B8 jumping cross aisle to x=32,35,38 on DB-X1 spare\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 38, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}]}, {\"note\": \"same positions using DB-X2 spare\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 38, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"split panels DB-B+DB-X1 to keep DB-B within continuous limit\", \"changes\": [{\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-B\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 35, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"sewing_machine\", \"x\": 38, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}]}]}",
+   "seconds": 6.93
+  }
+ ]
+}

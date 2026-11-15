@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add a packing bench near the other packing benches",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:43",
+ "calls": [
+  {
+   "hash": "0b4dc83c30e58c71",
+   "response": "{\"layouts\": [{\"note\": \"south of existing benches with clear operator cells\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 52, \"y\": 16, \"rotation\": 0}]}, {\"note\": \"west side by side to PB1\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 48, \"y\": 8, \"rotation\": 0}]}, {\"note\": \"north of PB1\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 52, \"y\": 5, \"rotation\": 0}]}]}",
+   "seconds": 9.21
+  }
+ ]
+}

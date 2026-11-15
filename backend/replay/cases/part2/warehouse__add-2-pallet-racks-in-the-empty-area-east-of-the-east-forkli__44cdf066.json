@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add 2 pallet racks in the empty area east of the east forklift aisle",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:30:35",
+ "calls": [
+  {
+   "hash": "eeb8ea90938bab45",
+   "response": "{\"layouts\": [{\"note\": \"Add 2 racks NE of east aisle above packing benches\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 48, \"y\": 2, \"rotation\": 90}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 48, \"y\": 15, \"rotation\": 0}]}, {\"note\": \"Add 2 racks in central empty band y15-19 east of aisle\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 15, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 18, \"rotation\": 0}]}, {\"note\": \"Add 2 racks east of aisle at y24 and y31\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 24, \"rotation\": 90}, {\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 46, \"y\": 31, \"rotation\": 90}]}]}",
+   "seconds": 6.7
+  }
+ ]
+}

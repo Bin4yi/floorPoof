@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Put a packing table next to each of the two cutting tables",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:34:07",
+ "calls": [
+  {
+   "hash": "e178db9ffa808621",
+   "response": "{\"layouts\": [{\"note\": \"packing tables just south of cut tables offset to keep cut work cells clear\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 38, \"y\": 5, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 46, \"y\": 5, \"rotation\": 0}]}, {\"note\": \"packing tables rotated east-west beside cut tables\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_table\", \"x\": 32, \"y\": 5, \"rotation\": 90}, {\"op\": \"add\", \"type\": \"packing_table\", \"x\": 48, \"y\": 2, \"rotation\": 90}]}]}",
+   "seconds": 10.46
+  }
+ ]
+}

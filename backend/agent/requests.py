@@ -25,6 +25,10 @@ def satisfies(g: Graph, floor: str, must: dict, changes: list) -> tuple[bool, st
         if len(got) != want["count"]:
             where = f" in line {want['line']}" if "line" in want else (f" in {want['zone']}" if "zone" in want else "")
             return False, f"asked for {want['count']} {want['type']}{where}, layout adds {len(got)}"
+    asked_removed = set(must.get("remove", []))
+    extra = sorted(c.get("id") for c in ch if c.get("op") == "remove" and c.get("id") not in asked_removed)
+    if extra:
+        return False, f"removes items nobody asked to remove ({', '.join(extra)})"
     for iid in must.get("remove", []):
         if not any(c.get("op") == "remove" and c.get("id") == iid for c in ch):
             return False, f"{iid} was not removed"

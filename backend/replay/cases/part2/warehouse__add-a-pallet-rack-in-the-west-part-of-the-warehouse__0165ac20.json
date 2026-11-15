@@ -1,0 +1,14 @@
+{
+ "floor": "warehouse",
+ "request": "Add a pallet rack in the west part of the warehouse",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:31:31",
+ "calls": [
+  {
+   "hash": "b456c0f1badb63bd",
+   "response": "{\"layouts\": [{\"note\": \"add rack at north-west column aligned to existing racks\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 4, \"y\": 2, \"rotation\": 90}]}, {\"note\": \"add rack mid-north west\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 4, \"y\": 9, \"rotation\": 90}]}, {\"note\": \"add rack south-west below walk aisle\", \"changes\": [{\"op\": \"add\", \"type\": \"pallet_rack\", \"x\": 4, \"y\": 24, \"rotation\": 90}]}]}",
+   "seconds": 8.48
+  }
+ ]
+}

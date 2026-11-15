@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 3 pressing machines to Line D",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:33:44",
+ "calls": [
+  {
+   "hash": "91712bb1bf1c7d02",
+   "response": "{\"layouts\": [{\"note\": \"Extend Line D past cross aisle to x32+\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-P2\"}]}, {\"note\": \"Use X1+X2+P2 panels\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 35, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 38, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-P2\"}]}, {\"note\": \"All on north spare boxes past aisle\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 35, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 38, \"y\": 31, \"rotation\": 0, \"line\": \"D\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 11.55
+  }
+ ]
+}

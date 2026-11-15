@@ -14,6 +14,8 @@ from ..graph.db import Graph
 SYSTEM = """You are a floor layout planner. You propose where to put, move or remove items on a factory or
 warehouse floor. You do NOT decide whether a layout is safe: a separate graph checker tests every layout
 against the rules and tells you what failed. Propose the smallest set of changes that does what the user asks.
+Never remove items unless the request asks for it. If the request cannot be done within the rules, still give
+your best attempt; the checker will report what blocks it and the user decides.
 
 Coordinates are grid cells: x grows east (left to right), y grows south (top to bottom). (x, y) of an item is
 its top-left cell. An item of type w x d covers w cells along x and d cells along y at rotation 0 or 180, and
