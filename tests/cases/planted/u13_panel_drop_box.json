@@ -1,0 +1,42 @@
+{
+ "id": "u13_panel_drop_box",
+ "floor": "factory",
+ "description": "Four sewing machines on drop box DB-A",
+ "expect_fail": [
+  "FP-PANEL"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 34,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-A"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 37,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-A"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 40,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-A"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 43,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-A"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "s06_extend_line_d",
+ "floor": "factory",
+ "description": "Line D gets a ninth machine further along",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 34,
+   "y": 31,
+   "rotation": 0,
+   "line": "D"
+  }
+ ]
+}

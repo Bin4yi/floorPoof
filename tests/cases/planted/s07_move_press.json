@@ -1,0 +1,14 @@
+{
+ "id": "s07_move_press",
+ "floor": "factory",
+ "description": "P3 moved next to P2's column",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "move",
+   "id": "P3",
+   "x": 84,
+   "y": 32
+  }
+ ]
+}

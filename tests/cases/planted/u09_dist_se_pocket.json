@@ -1,0 +1,45 @@
+{
+ "id": "u09_dist_se_pocket",
+ "floor": "factory",
+ "description": "Wall of racks closes the south-east corner",
+ "expect_fail": [
+  "FP-EXIT-DIST"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 22,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 26,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 30,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 96,
+   "y": 34,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 96,
+   "y": 37,
+   "rotation": 90
+  }
+ ]
+}

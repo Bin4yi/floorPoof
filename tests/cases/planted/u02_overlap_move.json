@@ -1,0 +1,16 @@
+{
+ "id": "u02_overlap_move",
+ "floor": "factory",
+ "description": "Press P2 moved onto P1",
+ "expect_fail": [
+  "FP-OVERLAP"
+ ],
+ "changes": [
+  {
+   "op": "move",
+   "id": "P2",
+   "x": 80,
+   "y": 26
+  }
+ ]
+}

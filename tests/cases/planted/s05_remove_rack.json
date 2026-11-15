@@ -1,0 +1,12 @@
+{
+ "id": "s05_remove_rack",
+ "floor": "factory",
+ "description": "Rack R4 removed",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "remove",
+   "id": "R4"
+  }
+ ]
+}

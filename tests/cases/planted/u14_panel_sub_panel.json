@@ -1,0 +1,42 @@
+{
+ "id": "u14_panel_sub_panel",
+ "floor": "factory",
+ "description": "Four presses on sub-panel SUB-N",
+ "expect_fail": [
+  "FP-PANEL"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 34,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 38,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 42,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X2"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 46,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X2"
+  }
+ ]
+}

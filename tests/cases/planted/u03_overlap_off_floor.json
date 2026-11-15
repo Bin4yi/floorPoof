@@ -1,0 +1,17 @@
+{
+ "id": "u03_overlap_off_floor",
+ "floor": "factory",
+ "description": "Packing table hangs off the east wall",
+ "expect_fail": [
+  "FP-OVERLAP"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "packing_table",
+   "x": 99,
+   "y": 10,
+   "rotation": 270
+  }
+ ]
+}

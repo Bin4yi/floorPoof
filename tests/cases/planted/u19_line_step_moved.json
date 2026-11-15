@@ -1,0 +1,16 @@
+{
+ "id": "u19_line_step_moved",
+ "floor": "factory",
+ "description": "B3 moved past B4",
+ "expect_fail": [
+  "FP-LINE"
+ ],
+ "changes": [
+  {
+   "op": "move",
+   "id": "B3",
+   "x": 40,
+   "y": 12
+  }
+ ]
+}

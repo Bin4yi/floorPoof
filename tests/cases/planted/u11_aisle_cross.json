@@ -1,0 +1,17 @@
+{
+ "id": "u11_aisle_cross",
+ "floor": "factory",
+ "description": "Cutting table placed in the cross aisle",
+ "expect_fail": [
+  "FP-AISLE"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "cutting_table",
+   "x": 28,
+   "y": 26,
+   "rotation": 90
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "id": "s03_move_cutting_table",
+ "floor": "factory",
+ "description": "CUT2 moved east",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "move",
+   "id": "CUT2",
+   "x": 50,
+   "y": 2
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "id": "s08_add_rack",
+ "floor": "factory",
+ "description": "Rack added south of the main aisle",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 40,
+   "y": 30,
+   "rotation": 90
+  }
+ ]
+}

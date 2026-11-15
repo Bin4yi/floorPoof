@@ -1,0 +1,18 @@
+{
+ "id": "u18_line_backward_add",
+ "floor": "factory",
+ "description": "New Line C machine placed behind the start of the line",
+ "expect_fail": [
+  "FP-LINE"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 5,
+   "y": 27,
+   "rotation": 0,
+   "line": "C"
+  }
+ ]
+}

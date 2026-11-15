@@ -1,0 +1,17 @@
+{
+ "id": "u05_reach_faces_wall",
+ "floor": "factory",
+ "description": "Machine faces the north wall, no work position",
+ "expect_fail": [
+  "FP-EXIT-REACH"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 40,
+   "y": 0,
+   "rotation": 180
+  }
+ ]
+}

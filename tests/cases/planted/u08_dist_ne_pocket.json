@@ -1,0 +1,47 @@
+{
+ "id": "u08_dist_ne_pocket",
+ "floor": "factory",
+ "description": "Wall of racks makes a north-east pocket",
+ "expect_fail": [
+  "FP-EXIT-DIST"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 0,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 4,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 96,
+   "y": 8,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 96,
+   "y": 12,
+   "rotation": 90,
+   "panel": "DB-X2"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 96,
+   "y": 15,
+   "rotation": 90,
+   "panel": "DB-X2"
+  }
+ ]
+}

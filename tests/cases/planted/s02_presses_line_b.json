@@ -1,0 +1,44 @@
+{
+ "id": "s02_presses_line_b",
+ "floor": "factory",
+ "description": "Four presses for Line B spread over two sub-panels",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 34,
+   "y": 10,
+   "rotation": 0,
+   "line": "B",
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 38,
+   "y": 10,
+   "rotation": 0,
+   "line": "B",
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 42,
+   "y": 10,
+   "rotation": 0,
+   "line": "B",
+   "panel": "DB-X2"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 78,
+   "y": 36,
+   "rotation": 0,
+   "line": "B",
+   "panel": "DB-P2"
+  }
+ ]
+}

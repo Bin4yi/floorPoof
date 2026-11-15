@@ -1,0 +1,16 @@
+{
+ "id": "u06_reach_table_blocks_table",
+ "floor": "factory",
+ "description": "CUT2 moved in front of CUT1",
+ "expect_fail": [
+  "FP-EXIT-REACH"
+ ],
+ "changes": [
+  {
+   "op": "move",
+   "id": "CUT2",
+   "x": 36,
+   "y": 5
+  }
+ ]
+}

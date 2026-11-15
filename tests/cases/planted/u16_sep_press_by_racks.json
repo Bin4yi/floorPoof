@@ -1,0 +1,21 @@
+{
+ "id": "u16_sep_press_by_racks",
+ "floor": "factory",
+ "description": "Press placed next to the fabric racks",
+ "expect_fail": [
+  "FP-SEP"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 87,
+   "y": 9,
+   "rotation": 0,
+   "panel": "DB-X2"
+  }
+ ],
+ "needs_rule_value": [
+  "FP-SEP"
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "u04_reach_work_blocked",
+ "floor": "factory",
+ "description": "Packing table blocks the work position of A3",
+ "expect_fail": [
+  "FP-EXIT-REACH"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "packing_table",
+   "x": 8,
+   "y": 4,
+   "rotation": 0
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "id": "u07_dist_se_pocket_item",
+ "floor": "factory",
+ "description": "Wall of racks makes a south-east pocket with a machine inside",
+ "expect_fail": [
+  "FP-EXIT-DIST"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 95,
+   "y": 22,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 95,
+   "y": 26,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 95,
+   "y": 30,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 95,
+   "y": 34,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 95,
+   "y": 37,
+   "rotation": 90
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 98,
+   "y": 36,
+   "rotation": 270
+  }
+ ]
+}

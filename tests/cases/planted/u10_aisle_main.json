@@ -1,0 +1,17 @@
+{
+ "id": "u10_aisle_main",
+ "floor": "factory",
+ "description": "Cutting table placed in the main aisle",
+ "expect_fail": [
+  "FP-AISLE"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "cutting_table",
+   "x": 10,
+   "y": 18,
+   "rotation": 0
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+{
+ "id": "s01_no_change",
+ "floor": "factory",
+ "description": "Accepted floor as it is",
+ "expect_fail": [],
+ "changes": []
+}

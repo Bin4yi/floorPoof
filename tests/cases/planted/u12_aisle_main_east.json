@@ -1,0 +1,24 @@
+{
+ "id": "u12_aisle_main_east",
+ "floor": "factory",
+ "description": "Two racks close the main aisle at the east side",
+ "expect_fail": [
+  "FP-AISLE"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 60,
+   "y": 18,
+   "rotation": 180
+  },
+  {
+   "op": "add",
+   "type": "fabric_rack",
+   "x": 60,
+   "y": 20,
+   "rotation": 0
+  }
+ ]
+}

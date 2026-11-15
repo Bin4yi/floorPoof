@@ -1,0 +1,19 @@
+{
+ "id": "u17_sep_press_moved",
+ "floor": "factory",
+ "description": "Press P1 moved into the fabric store",
+ "expect_fail": [
+  "FP-SEP"
+ ],
+ "changes": [
+  {
+   "op": "move",
+   "id": "P1",
+   "x": 92,
+   "y": 10
+  }
+ ],
+ "needs_rule_value": [
+  "FP-SEP"
+ ]
+}

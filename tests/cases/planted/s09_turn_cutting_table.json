@@ -1,0 +1,13 @@
+{
+ "id": "s09_turn_cutting_table",
+ "floor": "factory",
+ "description": "CUT1 turned to face north",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "move",
+   "id": "CUT1",
+   "rotation": 180
+  }
+ ]
+}

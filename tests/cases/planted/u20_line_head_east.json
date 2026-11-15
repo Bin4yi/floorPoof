@@ -1,0 +1,20 @@
+{
+ "id": "u20_line_head_east",
+ "floor": "factory",
+ "description": "New first step of Line B placed far east",
+ "expect_fail": [
+  "FP-LINE"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 34,
+   "y": 10,
+   "rotation": 0,
+   "line": "B",
+   "seq": 0,
+   "panel": "DB-X1"
+  }
+ ]
+}

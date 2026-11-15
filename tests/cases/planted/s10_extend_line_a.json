@@ -1,0 +1,24 @@
+{
+ "id": "s10_extend_line_a",
+ "floor": "factory",
+ "description": "Line A gets two more machines further along",
+ "expect_fail": [],
+ "changes": [
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 50,
+   "y": 10,
+   "rotation": 0,
+   "line": "A"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 53,
+   "y": 10,
+   "rotation": 0,
+   "line": "A"
+  }
+ ]
+}

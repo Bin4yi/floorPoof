@@ -1,0 +1,66 @@
+{
+ "id": "u15_panel_main_breaker",
+ "floor": "factory",
+ "description": "New load spread over every sub-panel overloads MAIN",
+ "expect_fail": [
+  "FP-PANEL"
+ ],
+ "changes": [
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 34,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 38,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X1"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 42,
+   "y": 10,
+   "rotation": 0,
+   "panel": "DB-X2"
+  },
+  {
+   "op": "add",
+   "type": "pressing_machine",
+   "x": 78,
+   "y": 36,
+   "rotation": 0,
+   "panel": "DB-P2"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 34,
+   "y": 24,
+   "rotation": 0,
+   "panel": "DB-C"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 37,
+   "y": 24,
+   "rotation": 0,
+   "panel": "DB-C"
+  },
+  {
+   "op": "add",
+   "type": "sewing_machine",
+   "x": 40,
+   "y": 24,
+   "rotation": 0,
+   "panel": "DB-C"
+  }
+ ]
+}
