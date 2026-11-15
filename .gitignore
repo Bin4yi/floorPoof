@@ -6,3 +6,6 @@ node_modules/
 .claude/settings.local.json
 spikes/day1/*.rl
 spikes/day1/package-lock.json
+frontend/dist/
+spikes/try_*.py
+docs/reproduce.json
