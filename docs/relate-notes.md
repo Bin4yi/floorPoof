@@ -40,7 +40,7 @@ with relate.connect("floorproof.rl") as conn:   # path ending in .rl = single fi
 - Writes are private until commit. No nested transactions. After a failed statement,
   you must roll back before anything else runs.
 - Plan for drafts: write the draft, run checks, `rollback()`. This matches PROJECT.md's
-  first choice. **Not yet run on this laptop** (see blocker below).
+  first choice. **Tested and works** (see native timings).
 - The WASM build has **no transactions** and **cannot open `.rl` files** (only `:memory:` and `opfs://`).
 
 ## Cypher path features (tested in WASM build, same engine)
@@ -74,9 +74,29 @@ so always use it inside `MATCH`. `CREATE`/`MERGE` accept only fixed-length patte
 | Shortest path from all 1,199 cells to the exit | 1,064 ms |
 | Sum kw per panel, all power-tree levels | 3 ms |
 
-Native Python should be faster than WASM, but this is not measured yet.
 
-## BLOCKER: native library blocked on this laptop
+## Native timings (Python 3.14, relate-db 1.0.1, WSL2 Ubuntu 26.04, store on /mnt/c)
+
+| Query | Time |
+| --- | --- |
+| Create 1,200 cells (UNWIND) | 19 ms |
+| Adjacency via `UNWIND $pairs` | 89 ms |
+| 40x30 shortestPath corner to exit (68 hops) | 0.8 to 1.4 ms |
+| Shortest path from all 1,199 cells to the exit | 299 ms (memory), 303 ms (.rl) |
+| Sum kw at all power-tree levels | 0.4 ms |
+| Write, close, reopen `.rl`, read back | works; empty store file is 32 KB |
+| Transaction: create 10 drafts, query (sees 10), `rollback()` | works; count unchanged, 0 drafts after reopen |
+
+Native is about 4x to 6x faster than WASM. The `.rl` file on the Windows drive (`/mnt/c`) is fine.
+
+## How we run it: WSL2
+
+On this laptop the Python code runs inside WSL2 Ubuntu (see blocker below).
+- Code stays in the Windows folder; WSL reads it via `/mnt/c/...`.
+- venv lives in Linux home: `~/.venvs/floorproof` (python3.14-venv installed with `wsl -u root`).
+- Run: `wsl -d Ubuntu --cd <repo path in /mnt/c> -- bash -lc '~/.venvs/floorproof/bin/python <script>'`
+
+## Why WSL: native library blocked on Windows here
 
 `import relate` fails:
 
@@ -90,16 +110,18 @@ so Windows blocks it. Other native wheels (e.g. `pydantic_core`) load fine.
 The `relate.exe` CLI and the Node native client are also unsigned, so they will be blocked too.
 The WASM build runs (inside signed node.exe) but cannot open `.rl` and has no transactions.
 
-`spikes/day1/native_test.py` is ready and covers the remaining day-1 checks
-(.rl write/close/reopen, transaction rollback, native timings). Run it once the DLL loads.
+Windows machines without Smart App Control load it fine. The README will tell
+Windows users: if you see this error, use WSL2.
 
 ## Day-1 checklist status
 
-- [ ] Install Relate on Windows and run one query: installed; native import blocked; WASM query OK
-- [ ] Open a single-file store (.rl): API known, not run (blocked)
-- [ ] Write, close, reopen, read back: script ready, not run (blocked)
+- [x] Install Relate and run one query (native in WSL2; WASM in Node on Windows)
+- [x] Open a single-file store (.rl)
+- [x] Write, close, reopen, read back
 - [x] Path query on a small grid (shortestPath, ANY SHORTEST, var-length)
 - [x] Sum query (kw per panel, and up the FED_BY tree)
 - [x] Path query timing on 40x30
-- [ ] Transaction write, query, rollback, store unchanged: script ready, not run (blocked)
+- [x] Transaction write, query, rollback, store unchanged
 - [x] This file
+
+Scripts: `spikes/day1/native_test.py`, `native_heavy.py`, `wasm_test.mjs`, `wasm_build_test.mjs`.
