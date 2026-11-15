@@ -1,0 +1,708 @@
+{
+ "pack": {
+  "name": "garment_factory",
+  "label": "Garment factory"
+ },
+ "floor": {
+  "name": "factory",
+  "label": "Garment factory floor",
+  "width_m": 40,
+  "depth_m": 20,
+  "cell_m": 0.5,
+  "sprinklered": false,
+  "data_note": "Example floor. The layout, machine sizes and kW values are made up for the demo. The rules are real."
+ },
+ "exits": [
+  {
+   "name": "W1",
+   "x": 0,
+   "y": 8
+  },
+  {
+   "name": "W2",
+   "x": 0,
+   "y": 31
+  }
+ ],
+ "zones": [
+  {
+   "name": "Main aisle",
+   "kind": "aisle",
+   "axis": "x",
+   "x0": 0,
+   "y0": 18,
+   "x1": 79,
+   "y1": 21
+  },
+  {
+   "name": "Cross aisle",
+   "kind": "aisle",
+   "axis": "y",
+   "x0": 28,
+   "y0": 0,
+   "x1": 31,
+   "y1": 39
+  },
+  {
+   "name": "Fabric store",
+   "kind": "fabric_store",
+   "x0": 66,
+   "y0": 0,
+   "x1": 79,
+   "y1": 12
+  },
+  {
+   "name": "Finishing",
+   "kind": "finishing",
+   "x0": 56,
+   "y0": 24,
+   "x1": 79,
+   "y1": 39
+  }
+ ],
+ "item_types": [
+  {
+   "name": "sewing_machine",
+   "label": "Sewing machine",
+   "w": 3,
+   "d": 2,
+   "h": 1.2,
+   "kw": 0.55,
+   "heat": false,
+   "color": "#4f7cac"
+  },
+  {
+   "name": "pressing_machine",
+   "label": "Pressing machine",
+   "w": 3,
+   "d": 3,
+   "h": 1.4,
+   "kw": 4.5,
+   "heat": true,
+   "color": "#c0504d"
+  },
+  {
+   "name": "cutting_table",
+   "label": "Cutting table",
+   "w": 6,
+   "d": 3,
+   "h": 0.9,
+   "kw": 0,
+   "heat": false,
+   "color": "#9b8a5a"
+  },
+  {
+   "name": "fabric_rack",
+   "label": "Fabric rack",
+   "w": 4,
+   "d": 2,
+   "h": 2.2,
+   "kw": 0,
+   "heat": false,
+   "color": "#8064a2"
+  },
+  {
+   "name": "packing_table",
+   "label": "Packing table",
+   "w": 4,
+   "d": 2,
+   "h": 0.9,
+   "kw": 0,
+   "heat": false,
+   "color": "#7f9f6a"
+  }
+ ],
+ "separations": [
+  {
+   "from": "pressing_machine",
+   "to": "fabric_rack",
+   "min_m": "TBD"
+  }
+ ],
+ "panels": [
+  {
+   "name": "MAIN",
+   "kind": "main_breaker",
+   "capacity_kw": 80,
+   "fed_by": null,
+   "x": 79,
+   "y": 39
+  },
+  {
+   "name": "SUB-N",
+   "kind": "sub_panel",
+   "capacity_kw": 30,
+   "fed_by": "MAIN",
+   "x": 32,
+   "y": 0
+  },
+  {
+   "name": "SUB-S",
+   "kind": "sub_panel",
+   "capacity_kw": 30,
+   "fed_by": "MAIN",
+   "x": 32,
+   "y": 39
+  },
+  {
+   "name": "SUB-F",
+   "kind": "sub_panel",
+   "capacity_kw": 30,
+   "fed_by": "MAIN",
+   "x": 79,
+   "y": 23
+  },
+  {
+   "name": "DB-A",
+   "kind": "drop_box",
+   "capacity_kw": 8,
+   "fed_by": "SUB-N",
+   "x": 26,
+   "y": 2
+  },
+  {
+   "name": "DB-B",
+   "kind": "drop_box",
+   "capacity_kw": 8,
+   "fed_by": "SUB-N",
+   "x": 26,
+   "y": 9
+  },
+  {
+   "name": "DB-X1",
+   "kind": "drop_box",
+   "capacity_kw": 12,
+   "fed_by": "SUB-N",
+   "x": 40,
+   "y": 7
+  },
+  {
+   "name": "DB-X2",
+   "kind": "drop_box",
+   "capacity_kw": 12,
+   "fed_by": "SUB-N",
+   "x": 52,
+   "y": 7
+  },
+  {
+   "name": "DB-C",
+   "kind": "drop_box",
+   "capacity_kw": 8,
+   "fed_by": "SUB-S",
+   "x": 26,
+   "y": 24
+  },
+  {
+   "name": "DB-D",
+   "kind": "drop_box",
+   "capacity_kw": 8,
+   "fed_by": "SUB-S",
+   "x": 26,
+   "y": 31
+  },
+  {
+   "name": "DB-P1",
+   "kind": "drop_box",
+   "capacity_kw": 12,
+   "fed_by": "SUB-F",
+   "x": 57,
+   "y": 24
+  },
+  {
+   "name": "DB-P2",
+   "kind": "drop_box",
+   "capacity_kw": 12,
+   "fed_by": "SUB-F",
+   "x": 57,
+   "y": 30
+  }
+ ],
+ "lines": [
+  {
+   "name": "A",
+   "direction": "+x"
+  },
+  {
+   "name": "B",
+   "direction": "+x"
+  },
+  {
+   "name": "C",
+   "direction": "+x"
+  },
+  {
+   "name": "D",
+   "direction": "+x"
+  }
+ ],
+ "items": [
+  {
+   "id": "A1",
+   "type": "sewing_machine",
+   "x": 2,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 1,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A2",
+   "type": "sewing_machine",
+   "x": 5,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 2,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A3",
+   "type": "sewing_machine",
+   "x": 8,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 3,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A4",
+   "type": "sewing_machine",
+   "x": 11,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 4,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A5",
+   "type": "sewing_machine",
+   "x": 14,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 5,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A6",
+   "type": "sewing_machine",
+   "x": 17,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 6,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A7",
+   "type": "sewing_machine",
+   "x": 20,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 7,
+   "panel": "DB-A"
+  },
+  {
+   "id": "A8",
+   "type": "sewing_machine",
+   "x": 23,
+   "y": 2,
+   "rotation": 0,
+   "line": "A",
+   "seq": 8,
+   "panel": "DB-A"
+  },
+  {
+   "id": "B1",
+   "type": "sewing_machine",
+   "x": 2,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 1,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B2",
+   "type": "sewing_machine",
+   "x": 5,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 2,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B3",
+   "type": "sewing_machine",
+   "x": 8,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 3,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B4",
+   "type": "sewing_machine",
+   "x": 11,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 4,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B5",
+   "type": "sewing_machine",
+   "x": 14,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 5,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B6",
+   "type": "sewing_machine",
+   "x": 17,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 6,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B7",
+   "type": "sewing_machine",
+   "x": 20,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 7,
+   "panel": "DB-B"
+  },
+  {
+   "id": "B8",
+   "type": "sewing_machine",
+   "x": 23,
+   "y": 9,
+   "rotation": 0,
+   "line": "B",
+   "seq": 8,
+   "panel": "DB-B"
+  },
+  {
+   "id": "C1",
+   "type": "sewing_machine",
+   "x": 2,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 1,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C2",
+   "type": "sewing_machine",
+   "x": 5,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 2,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C3",
+   "type": "sewing_machine",
+   "x": 8,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 3,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C4",
+   "type": "sewing_machine",
+   "x": 11,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 4,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C5",
+   "type": "sewing_machine",
+   "x": 14,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 5,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C6",
+   "type": "sewing_machine",
+   "x": 17,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 6,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C7",
+   "type": "sewing_machine",
+   "x": 20,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 7,
+   "panel": "DB-C"
+  },
+  {
+   "id": "C8",
+   "type": "sewing_machine",
+   "x": 23,
+   "y": 24,
+   "rotation": 0,
+   "line": "C",
+   "seq": 8,
+   "panel": "DB-C"
+  },
+  {
+   "id": "D1",
+   "type": "sewing_machine",
+   "x": 2,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 1,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D2",
+   "type": "sewing_machine",
+   "x": 5,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 2,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D3",
+   "type": "sewing_machine",
+   "x": 8,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 3,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D4",
+   "type": "sewing_machine",
+   "x": 11,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 4,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D5",
+   "type": "sewing_machine",
+   "x": 14,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 5,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D6",
+   "type": "sewing_machine",
+   "x": 17,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 6,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D7",
+   "type": "sewing_machine",
+   "x": 20,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 7,
+   "panel": "DB-D"
+  },
+  {
+   "id": "D8",
+   "type": "sewing_machine",
+   "x": 23,
+   "y": 31,
+   "rotation": 0,
+   "line": "D",
+   "seq": 8,
+   "panel": "DB-D"
+  },
+  {
+   "id": "CUT1",
+   "type": "cutting_table",
+   "x": 34,
+   "y": 2,
+   "rotation": 0
+  },
+  {
+   "id": "CUT2",
+   "type": "cutting_table",
+   "x": 42,
+   "y": 2,
+   "rotation": 0
+  },
+  {
+   "id": "R1",
+   "type": "fabric_rack",
+   "x": 67,
+   "y": 1,
+   "rotation": 0
+  },
+  {
+   "id": "R2",
+   "type": "fabric_rack",
+   "x": 72,
+   "y": 1,
+   "rotation": 0
+  },
+  {
+   "id": "R3",
+   "type": "fabric_rack",
+   "x": 67,
+   "y": 6,
+   "rotation": 0
+  },
+  {
+   "id": "R4",
+   "type": "fabric_rack",
+   "x": 72,
+   "y": 6,
+   "rotation": 0
+  },
+  {
+   "id": "P1",
+   "type": "pressing_machine",
+   "x": 58,
+   "y": 26,
+   "rotation": 0,
+   "panel": "DB-P1"
+  },
+  {
+   "id": "P2",
+   "type": "pressing_machine",
+   "x": 63,
+   "y": 26,
+   "rotation": 0,
+   "panel": "DB-P1"
+  },
+  {
+   "id": "P3",
+   "type": "pressing_machine",
+   "x": 58,
+   "y": 32,
+   "rotation": 0,
+   "panel": "DB-P2"
+  },
+  {
+   "id": "PK1",
+   "type": "packing_table",
+   "x": 70,
+   "y": 33,
+   "rotation": 0
+  }
+ ],
+ "rules": [
+  {
+   "id": "FP-OVERLAP",
+   "kind": "overlap",
+   "title": "No two items on the same floor cell, and no item off the floor",
+   "params": {},
+   "status": "no_number",
+   "source_url": null,
+   "source_note": "Physical constraint. No number needed."
+  },
+  {
+   "id": "FP-EXIT-REACH",
+   "kind": "exit_reach",
+   "title": "Every work position can walk to an exit, and no exit is blocked",
+   "params": {},
+   "status": "sourced",
+   "source_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.37",
+   "source_note": "OSHA 29 CFR 1910.37(a)(3): exit routes must be free and unobstructed."
+  },
+  {
+   "id": "FP-EXIT-DIST",
+   "kind": "exit_distance",
+   "title": "Walk from each work position to the nearest exit is within the limit",
+   "params": {
+    "max_m_unsprinklered": 60.96,
+    "max_m_sprinklered": 76.2
+   },
+   "status": "sourced",
+   "source_url": "https://lawfilesext.leg.wa.gov/Law/WACArchive/2024/htm/WAC%20%2051%20-%2054A%20CHAPTER/WAC%20%2051%20-%2054A-1017.htm",
+   "source_note": "IBC Table 1017.2 (as adopted in WAC 51-54A-1017), occupancy F-1: 200 ft without sprinklers, 250 ft with sprinklers."
+  },
+  {
+   "id": "FP-AISLE",
+   "kind": "aisle_width",
+   "title": "Main aisles keep a clear width at every point",
+   "params": {
+    "min_m": 0.711,
+    "zone_kind": "aisle"
+   },
+   "status": "sourced",
+   "source_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.36",
+   "source_note": "OSHA 29 CFR 1910.36(g)(2): an exit access must be at least 28 inches (71.1 cm) wide at all points."
+  },
+  {
+   "id": "FP-PANEL",
+   "kind": "panel_load",
+   "title": "No drop box, sub-panel or main breaker over its continuous-load limit",
+   "params": {
+    "continuous_factor": 1.25
+   },
+   "status": "sourced",
+   "source_url": "https://iaeimagazine.org/2016/may2016/100-vs-80-choosing-the-right-ocpd-solution/",
+   "source_note": "NEC 210.20(A): device rating at least noncontinuous load plus 125% of continuous load, so a continuous load may use at most 80% of the rating. All machines are treated as continuous (3 h or more)."
+  },
+  {
+   "id": "FP-SEP",
+   "kind": "separation",
+   "title": "Hot machines are far enough from fabric storage",
+   "params": {},
+   "status": "TBD",
+   "source_url": null,
+   "source_note": "Minimum distance between pressing machines and fabric racks: no source yet (TBD)."
+  },
+  {
+   "id": "FP-LINE",
+   "kind": "line_flow",
+   "title": "Work moves forward along each line",
+   "params": {
+    "max_step_m": "TBD"
+   },
+   "status": "partial",
+   "source_url": null,
+   "source_note": "Process rule: each step sits further along the line direction than the one before. Maximum distance between steps: TBD."
+  }
+ ]
+}
