@@ -6,7 +6,7 @@
  "floor": {
   "name": "factory",
   "label": "Garment factory floor",
-  "width_m": 40,
+  "width_m": 50,
   "depth_m": 20,
   "cell_m": 0.5,
   "sprinklered": false,
@@ -31,7 +31,7 @@
    "axis": "x",
    "x0": 0,
    "y0": 18,
-   "x1": 79,
+   "x1": 99,
    "y1": 21
   },
   {
@@ -46,17 +46,17 @@
   {
    "name": "Fabric store",
    "kind": "fabric_store",
-   "x0": 66,
+   "x0": 86,
    "y0": 0,
-   "x1": 79,
+   "x1": 99,
    "y1": 12
   },
   {
    "name": "Finishing",
    "kind": "finishing",
-   "x0": 56,
+   "x0": 76,
    "y0": 24,
-   "x1": 79,
+   "x1": 99,
    "y1": 39
   }
  ],
@@ -121,11 +121,9 @@
  ],
  "panels": [
   {
-   "name": "MAIN",
-   "kind": "main_breaker",
-   "capacity_kw": 80,
+   "name": "MAIN", "kind": "main_breaker", "capacity_kw": 62,
    "fed_by": null,
-   "x": 79,
+   "x": 99,
    "y": 39
   },
   {
@@ -149,7 +147,7 @@
    "kind": "sub_panel",
    "capacity_kw": 30,
    "fed_by": "MAIN",
-   "x": 79,
+   "x": 99,
    "y": 23
   },
   {
@@ -205,7 +203,7 @@
    "kind": "drop_box",
    "capacity_kw": 12,
    "fed_by": "SUB-F",
-   "x": 57,
+   "x": 77,
    "y": 24
   },
   {
@@ -213,7 +211,7 @@
    "kind": "drop_box",
    "capacity_kw": 12,
    "fed_by": "SUB-F",
-   "x": 57,
+   "x": 77,
    "y": 30
   }
  ],
@@ -573,35 +571,35 @@
   {
    "id": "R1",
    "type": "fabric_rack",
-   "x": 67,
+   "x": 87,
    "y": 1,
    "rotation": 0
   },
   {
    "id": "R2",
    "type": "fabric_rack",
-   "x": 72,
+   "x": 92,
    "y": 1,
    "rotation": 0
   },
   {
    "id": "R3",
    "type": "fabric_rack",
-   "x": 67,
+   "x": 87,
    "y": 6,
    "rotation": 0
   },
   {
    "id": "R4",
    "type": "fabric_rack",
-   "x": 72,
+   "x": 92,
    "y": 6,
    "rotation": 0
   },
   {
    "id": "P1",
    "type": "pressing_machine",
-   "x": 58,
+   "x": 78,
    "y": 26,
    "rotation": 0,
    "panel": "DB-P1"
@@ -609,7 +607,7 @@
   {
    "id": "P2",
    "type": "pressing_machine",
-   "x": 63,
+   "x": 83,
    "y": 26,
    "rotation": 0,
    "panel": "DB-P1"
@@ -617,7 +615,7 @@
   {
    "id": "P3",
    "type": "pressing_machine",
-   "x": 58,
+   "x": 78,
    "y": 32,
    "rotation": 0,
    "panel": "DB-P2"
@@ -625,7 +623,7 @@
   {
    "id": "PK1",
    "type": "packing_table",
-   "x": 70,
+   "x": 90,
    "y": 33,
    "rotation": 0
   }

@@ -133,13 +133,48 @@ def _nearest_drop_box(pans: list[dict], x: int, y: int) -> str | None:
     return min(boxes, key=lambda p: (abs(p["x"] - x) + abs(p["y"] - y), p["name"]))["name"]
 
 
+def normalize_changes(changes: list[dict]) -> list[dict]:
+    """Merge changes that touch the same item, so each item is written at most once.
+
+    add+move -> add, add+remove -> nothing, move+move -> move, move+remove -> remove.
+    Needed because Relate 1.0.1 panics when a transaction deletes a node or link
+    it created itself (see docs/relate-notes.md).
+    """
+    if not isinstance(changes, list):
+        raise LayoutError("changes must be a list")
+    out: list[dict] = []
+    last: dict[str, int] = {}  # id -> index in out
+    for n, ch in enumerate(changes):
+        if not isinstance(ch, dict):
+            raise LayoutError(f"change {n} is not an object")
+        ch = dict(ch)
+        iid = ch.get("id")
+        k = last.get(iid) if iid is not None else None
+        if k is None or out[k] is None:
+            if iid is not None:
+                last[iid] = len(out)
+            out.append(ch)
+            continue
+        prev, op = out[k], ch.get("op")
+        if op == "move" and prev["op"] in ("add", "move"):
+            out[k] = {**prev, **{f: v for f, v in ch.items() if f != "op"}}
+        elif op == "remove" and prev["op"] == "add":
+            out[k] = None
+            del last[iid]
+        elif op == "remove" and prev["op"] == "move":
+            out[k] = {"op": "remove", "id": iid}
+        else:
+            last[iid] = len(out)
+            out.append(ch)
+    return [c for c in out if c is not None]
+
+
 def apply_changes(g: Graph, floor: str, changes: list[dict]) -> dict:
     """Apply a change list inside the current transaction.
 
     Returns {"inverse": [...], "placed": [ids]}. Raises LayoutError on bad input.
     """
-    if not isinstance(changes, list):
-        raise LayoutError("changes must be a list")
+    changes = normalize_changes(changes)
     info = floor_info(g, floor)
     types = item_types(g, info["pack"])
     current = items(g, floor)

@@ -113,6 +113,24 @@ The WASM build runs (inside signed node.exe) but cannot open `.rl` and has no tr
 Windows machines without Smart App Control load it fine. The README will tell
 Windows users: if you see this error, use WSL2.
 
+## Bug found: delete-after-create in one transaction panics (Relate 1.0.1)
+
+Inside an explicit transaction (`autocommit = False`), deleting a node or a
+relationship that was **created earlier in the same transaction** raises
+`pyo3_runtime.PanicException: update counters are non-negative: TryFromIntError(())`.
+The same statements in autocommit mode work. Deleting things that existed before
+the transaction works. Repro: `spikes/day1/panic_probe.py`.
+
+Workaround in FloorProof: `normalize_changes()` in `backend/graph/layout.py` merges
+changes to the same item (add+move -> add, move+move -> move, add+remove -> nothing),
+so a draft never deletes what it created.
+
+## Windows update
+
+Later on day 1 the native `_native.pyd` started loading on Windows too (Smart App
+Control seems to allow it now). `scripts/py.ps1` uses native Windows Python when
+`import relate` works there, and WSL2 otherwise.
+
 ## Day-1 checklist status
 
 - [x] Install Relate and run one query (native in WSL2; WASM in Node on Windows)

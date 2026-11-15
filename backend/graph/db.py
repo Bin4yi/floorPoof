@@ -6,6 +6,7 @@ Relate's one-writer-per-store model.
 """
 from __future__ import annotations
 
+import atexit
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -23,6 +24,7 @@ class Graph:
         self._ex = ThreadPoolExecutor(max_workers=1, thread_name_prefix=_THREAD_PREFIX)
         self._conn = self._ex.submit(lambda: relate.connect(path, read_only=read_only)).result()
         self.query_ms = 0.0  # total time spent in queries, for check timing
+        atexit.register(self.close)  # close before the interpreter shuts down
 
     # -- thread plumbing -------------------------------------------------
     def _on_worker(self) -> bool:
@@ -85,7 +87,7 @@ class Graph:
         return self.run(go)
 
     def close(self) -> None:
-        if self._conn is not None:
-            self.run(self._conn.close)
-            self._conn = None
+        if getattr(self, "_conn", None) is not None:
+            conn, self._conn = self._conn, None
+            self.run(conn.close)
         self._ex.shutdown(wait=True)
