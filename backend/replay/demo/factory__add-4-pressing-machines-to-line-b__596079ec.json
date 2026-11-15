@@ -1,0 +1,14 @@
+{
+ "floor": "factory",
+ "request": "Add 4 pressing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 00:14:24",
+ "calls": [
+  {
+   "hash": "3d27f3820ba46066",
+   "response": "{\"layouts\": [{\"note\": \"4 presses on Line B east of cross-aisle, clear of aisle cells\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"use DB-P2 and X boxes to spread load, 1m gaps\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-P2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}, {\"note\": \"rotated 180 so operator faces north toward exit B\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 180, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 180, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 180, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 180, \"line\": \"B\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 10.04
+  }
+ ]
+}
