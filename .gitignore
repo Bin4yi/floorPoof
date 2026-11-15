@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+node_modules/
+.claude/settings.local.json
+spikes/day1/*.rl
+spikes/day1/package-lock.json
