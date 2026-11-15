@@ -1,0 +1,10 @@
+{
+ "id": "r10_factory",
+ "floor": "factory",
+ "request": "Move press P3 to another spot to free space for packing",
+ "must": {
+  "move": [
+   "P3"
+  ]
+ }
+}

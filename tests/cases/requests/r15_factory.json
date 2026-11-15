@@ -1,0 +1,13 @@
+{
+ "id": "r15_factory",
+ "floor": "factory",
+ "request": "Add 5 pressing machines anywhere on the floor",
+ "must": {
+  "add": [
+   {
+    "type": "pressing_machine",
+    "count": 5
+   }
+  ]
+ }
+}

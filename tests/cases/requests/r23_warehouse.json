@@ -1,0 +1,14 @@
+{
+ "id": "r23_warehouse",
+ "floor": "warehouse",
+ "request": "Add 2 oxidizer pallets to the hazmat staging area",
+ "must": {
+  "add": [
+   {
+    "type": "oxidizer_pallet",
+    "count": 2,
+    "zone": "Hazmat staging"
+   }
+  ]
+ }
+}

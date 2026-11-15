@@ -1,0 +1,14 @@
+{
+ "id": "r03_factory",
+ "floor": "factory",
+ "request": "Add a ninth sewing machine to Line C",
+ "must": {
+  "add": [
+   {
+    "type": "sewing_machine",
+    "count": 1,
+    "line": "C"
+   }
+  ]
+ }
+}

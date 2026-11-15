@@ -1,0 +1,10 @@
+{
+ "id": "r25_warehouse",
+ "floor": "warehouse",
+ "request": "Move packing bench PB2 closer to the east exit",
+ "must": {
+  "move": [
+   "PB2"
+  ]
+ }
+}

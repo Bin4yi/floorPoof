@@ -1,0 +1,329 @@
+{
+ "pack": {
+  "name": "warehouse",
+  "label": "Warehouse"
+ },
+ "floor": {
+  "name": "warehouse",
+  "label": "Warehouse floor",
+  "width_m": 30,
+  "depth_m": 20,
+  "cell_m": 0.5,
+  "sprinklered": false,
+  "data_note": "Example floor. The layout and sizes are made up for the demo. The rules are real or TBD."
+ },
+ "exits": [
+  {
+   "name": "W1",
+   "x": 0,
+   "y": 20
+  },
+  {
+   "name": "E1",
+   "x": 59,
+   "y": 5
+  },
+  {
+   "name": "S1",
+   "x": 30,
+   "y": 39
+  }
+ ],
+ "zones": [
+  {
+   "name": "Walk aisle",
+   "kind": "aisle",
+   "axis": "x",
+   "x0": 0,
+   "y0": 20,
+   "x1": 59,
+   "y1": 21
+  },
+  {
+   "name": "Forklift aisle west",
+   "kind": "forklift_aisle",
+   "axis": "y",
+   "x0": 14,
+   "y0": 0,
+   "x1": 19,
+   "y1": 39
+  },
+  {
+   "name": "Forklift aisle east",
+   "kind": "forklift_aisle",
+   "axis": "y",
+   "x0": 38,
+   "y0": 0,
+   "x1": 43,
+   "y1": 39
+  },
+  {
+   "name": "Hazmat staging",
+   "kind": "staging",
+   "x0": 50,
+   "y0": 25,
+   "x1": 59,
+   "y1": 39
+  }
+ ],
+ "item_types": [
+  {
+   "name": "pallet_rack",
+   "label": "Pallet rack",
+   "w": 6,
+   "d": 2,
+   "h": 3.0,
+   "kw": 0,
+   "heat": false,
+   "color": "#5b7fa6"
+  },
+  {
+   "name": "oxidizer_pallet",
+   "label": "Oxidizer pallet",
+   "w": 2,
+   "d": 2,
+   "h": 1.2,
+   "kw": 0,
+   "heat": false,
+   "color": "#d9a441"
+  },
+  {
+   "name": "flammable_pallet",
+   "label": "Flammable liquid pallet",
+   "w": 2,
+   "d": 2,
+   "h": 1.2,
+   "kw": 0,
+   "heat": false,
+   "color": "#c0504d"
+  },
+  {
+   "name": "packing_bench",
+   "label": "Packing bench",
+   "w": 4,
+   "d": 2,
+   "h": 0.9,
+   "kw": 0,
+   "heat": false,
+   "color": "#7f9f6a"
+  }
+ ],
+ "separations": [
+  {
+   "from": "oxidizer_pallet",
+   "to": "flammable_pallet",
+   "min_m": "TBD"
+  }
+ ],
+ "panels": [],
+ "lines": [],
+ "items": [
+  {
+   "id": "K1",
+   "type": "pallet_rack",
+   "x": 12,
+   "y": 2,
+   "rotation": 90
+  },
+  {
+   "id": "K2",
+   "type": "pallet_rack",
+   "x": 12,
+   "y": 9,
+   "rotation": 90
+  },
+  {
+   "id": "K3",
+   "type": "pallet_rack",
+   "x": 12,
+   "y": 24,
+   "rotation": 90
+  },
+  {
+   "id": "K4",
+   "type": "pallet_rack",
+   "x": 12,
+   "y": 31,
+   "rotation": 90
+  },
+  {
+   "id": "K5",
+   "type": "pallet_rack",
+   "x": 20,
+   "y": 2,
+   "rotation": 270
+  },
+  {
+   "id": "K6",
+   "type": "pallet_rack",
+   "x": 20,
+   "y": 9,
+   "rotation": 270
+  },
+  {
+   "id": "K7",
+   "type": "pallet_rack",
+   "x": 20,
+   "y": 24,
+   "rotation": 270
+  },
+  {
+   "id": "K8",
+   "type": "pallet_rack",
+   "x": 20,
+   "y": 31,
+   "rotation": 270
+  },
+  {
+   "id": "K9",
+   "type": "pallet_rack",
+   "x": 36,
+   "y": 2,
+   "rotation": 90
+  },
+  {
+   "id": "K10",
+   "type": "pallet_rack",
+   "x": 36,
+   "y": 9,
+   "rotation": 90
+  },
+  {
+   "id": "K11",
+   "type": "pallet_rack",
+   "x": 36,
+   "y": 24,
+   "rotation": 90
+  },
+  {
+   "id": "K12",
+   "type": "pallet_rack",
+   "x": 36,
+   "y": 31,
+   "rotation": 90
+  },
+  {
+   "id": "K13",
+   "type": "pallet_rack",
+   "x": 44,
+   "y": 2,
+   "rotation": 270
+  },
+  {
+   "id": "K14",
+   "type": "pallet_rack",
+   "x": 44,
+   "y": 9,
+   "rotation": 270
+  },
+  {
+   "id": "K15",
+   "type": "pallet_rack",
+   "x": 44,
+   "y": 24,
+   "rotation": 270
+  },
+  {
+   "id": "K16",
+   "type": "pallet_rack",
+   "x": 44,
+   "y": 31,
+   "rotation": 270
+  },
+  {
+   "id": "OX1",
+   "type": "oxidizer_pallet",
+   "x": 52,
+   "y": 27,
+   "rotation": 0
+  },
+  {
+   "id": "OX2",
+   "type": "oxidizer_pallet",
+   "x": 55,
+   "y": 27,
+   "rotation": 0
+  },
+  {
+   "id": "FL1",
+   "type": "flammable_pallet",
+   "x": 52,
+   "y": 34,
+   "rotation": 0
+  },
+  {
+   "id": "FL2",
+   "type": "flammable_pallet",
+   "x": 55,
+   "y": 34,
+   "rotation": 0
+  },
+  {
+   "id": "PB1",
+   "type": "packing_bench",
+   "x": 52,
+   "y": 8,
+   "rotation": 0
+  },
+  {
+   "id": "PB2",
+   "type": "packing_bench",
+   "x": 52,
+   "y": 13,
+   "rotation": 0
+  }
+ ],
+ "rules": [
+  {
+   "id": "WH-OVERLAP",
+   "kind": "overlap",
+   "title": "No two items on the same floor cell, and no item off the floor",
+   "params": {},
+   "status": "no_number",
+   "source_url": null,
+   "source_note": "Physical constraint. No number needed."
+  },
+  {
+   "id": "WH-EXIT-REACH",
+   "kind": "exit_reach",
+   "title": "Every work position can walk to an exit, and no exit is blocked",
+   "params": {},
+   "status": "sourced",
+   "source_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.37",
+   "source_note": "OSHA 29 CFR 1910.37(a)(3): exit routes must be free and unobstructed."
+  },
+  {
+   "id": "WH-AISLE-WALK",
+   "kind": "aisle_width",
+   "title": "Walking aisle keeps a clear width at every point",
+   "params": {
+    "min_m": 0.711,
+    "zone_kind": "aisle"
+   },
+   "status": "sourced",
+   "source_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.36",
+   "source_note": "OSHA 29 CFR 1910.36(g)(2): an exit access must be at least 28 inches (71.1 cm) wide at all points."
+  },
+  {
+   "id": "WH-AISLE-FORKLIFT",
+   "kind": "aisle_width",
+   "title": "Forklift aisles keep a clear width at every point",
+   "params": {
+    "min_m": "TBD",
+    "zone_kind": "forklift_aisle"
+   },
+   "status": "TBD",
+   "source_url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.176",
+   "source_note": "OSHA 29 CFR 1910.176(a) requires sufficient safe clearances for aisles where mechanical handling equipment is used, but gives no number. Minimum width: TBD (depends on the truck)."
+  },
+  {
+   "id": "WH-SEP",
+   "kind": "separation",
+   "title": "Oxidizers are kept apart from flammable liquids",
+   "params": {},
+   "status": "TBD",
+   "source_url": null,
+   "source_note": "Minimum distance between oxidizer and flammable liquid pallets: no source yet (TBD)."
+  }
+ ]
+}

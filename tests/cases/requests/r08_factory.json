@@ -1,0 +1,14 @@
+{
+ "id": "r08_factory",
+ "floor": "factory",
+ "request": "Add a packing table in the finishing area",
+ "must": {
+  "add": [
+   {
+    "type": "packing_table",
+    "count": 1,
+    "zone": "Finishing"
+   }
+  ]
+ }
+}

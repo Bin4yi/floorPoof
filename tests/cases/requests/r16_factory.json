@@ -1,0 +1,13 @@
+{
+ "id": "r16_factory",
+ "floor": "factory",
+ "request": "Put a packing table next to each of the two cutting tables",
+ "must": {
+  "add": [
+   {
+    "type": "packing_table",
+    "count": 2
+   }
+  ]
+ }
+}

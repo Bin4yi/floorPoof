@@ -1,0 +1,14 @@
+{
+ "id": "r05_factory",
+ "floor": "factory",
+ "request": "Add 2 pressing machines in the finishing area",
+ "must": {
+  "add": [
+   {
+    "type": "pressing_machine",
+    "count": 2,
+    "zone": "Finishing"
+   }
+  ]
+ }
+}

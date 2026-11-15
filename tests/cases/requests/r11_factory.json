@@ -1,0 +1,16 @@
+{
+ "id": "r11_factory",
+ "floor": "factory",
+ "request": "Remove fabric rack R1 and put a packing table in its place",
+ "must": {
+  "remove": [
+   "R1"
+  ],
+  "add": [
+   {
+    "type": "packing_table",
+    "count": 1
+   }
+  ]
+ }
+}

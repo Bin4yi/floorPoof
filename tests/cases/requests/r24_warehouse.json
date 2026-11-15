@@ -1,0 +1,10 @@
+{
+ "id": "r24_warehouse",
+ "floor": "warehouse",
+ "request": "Remove rack K5",
+ "must": {
+  "remove": [
+   "K5"
+  ]
+ }
+}

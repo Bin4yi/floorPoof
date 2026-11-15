@@ -1,0 +1,13 @@
+{
+ "id": "r06_factory",
+ "floor": "factory",
+ "request": "Add a third cutting table near the other cutting tables",
+ "must": {
+  "add": [
+   {
+    "type": "cutting_table",
+    "count": 1
+   }
+  ]
+ }
+}

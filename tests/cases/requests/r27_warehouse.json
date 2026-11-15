@@ -1,0 +1,14 @@
+{
+ "id": "r27_warehouse",
+ "floor": "warehouse",
+ "request": "Add 3 flammable liquid pallets to the hazmat staging area",
+ "must": {
+  "add": [
+   {
+    "type": "flammable_pallet",
+    "count": 3,
+    "zone": "Hazmat staging"
+   }
+  ]
+ }
+}

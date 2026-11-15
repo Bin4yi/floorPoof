@@ -1,0 +1,10 @@
+{
+ "id": "r18_factory",
+ "floor": "factory",
+ "request": "Turn cutting table CUT1 so it faces north",
+ "must": {
+  "move": [
+   "CUT1"
+  ]
+ }
+}

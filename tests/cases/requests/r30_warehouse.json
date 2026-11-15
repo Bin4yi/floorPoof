@@ -1,0 +1,13 @@
+{
+ "id": "r30_warehouse",
+ "floor": "warehouse",
+ "request": "Add 2 packing benches next to the walking aisle",
+ "must": {
+  "add": [
+   {
+    "type": "packing_bench",
+    "count": 2
+   }
+  ]
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "id": "r20_factory",
+ "floor": "factory",
+ "request": "Remove sewing machine A8 from Line A",
+ "must": {
+  "remove": [
+   "A8"
+  ]
+ }
+}

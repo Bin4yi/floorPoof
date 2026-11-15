@@ -1,0 +1,10 @@
+{
+ "id": "r09_factory",
+ "floor": "factory",
+ "request": "Move cutting table CUT2 to give the cutting area more room",
+ "must": {
+  "move": [
+   "CUT2"
+  ]
+ }
+}

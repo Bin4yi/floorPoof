@@ -1,0 +1,13 @@
+{
+ "id": "r26_warehouse",
+ "floor": "warehouse",
+ "request": "Add a pallet rack in the west part of the warehouse",
+ "must": {
+  "add": [
+   {
+    "type": "pallet_rack",
+    "count": 1
+   }
+  ]
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "id": "r22_warehouse",
+ "floor": "warehouse",
+ "request": "Add a packing bench near the other packing benches",
+ "must": {
+  "add": [
+   {
+    "type": "packing_bench",
+    "count": 1
+   }
+  ]
+ }
+}

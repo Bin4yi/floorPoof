@@ -1,0 +1,14 @@
+{
+ "id": "r01_factory",
+ "floor": "factory",
+ "request": "Add 4 pressing machines to Line B",
+ "must": {
+  "add": [
+   {
+    "type": "pressing_machine",
+    "count": 4,
+    "line": "B"
+   }
+  ]
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "id": "r07_factory",
+ "floor": "factory",
+ "request": "Add 2 more fabric racks in the fabric store",
+ "must": {
+  "add": [
+   {
+    "type": "fabric_rack",
+    "count": 2,
+    "zone": "Fabric store"
+   }
+  ]
+ }
+}

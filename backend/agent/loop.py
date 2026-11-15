@@ -56,8 +56,9 @@ def build_agent(g: Graph, llm, *, record: bool = True, max_rounds: int = MAX_ROU
         attempts = list(s.get("attempts", []))
         failures = []
         for k, lay in enumerate(s["pending"], 1):
-            if lay.get("changes") is None:
-                ev = {"valid": False, "error": lay["error"], "passed": False, "results": [], "failed": [], "ms": 0.0}
+            if lay.get("changes") is None or not (lay["changes"] or s.get("base_changes")):
+                err = lay.get("error") or "layout proposes no changes"
+                ev = {"valid": False, "error": err, "passed": False, "results": [], "failed": [], "ms": 0.0}
                 changes: list = []
             else:
                 changes = list(s.get("base_changes", [])) + lay["changes"]

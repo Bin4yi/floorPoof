@@ -1,0 +1,10 @@
+{
+ "id": "r29_warehouse",
+ "floor": "warehouse",
+ "request": "Move rack K16 to a new spot",
+ "must": {
+  "move": [
+   "K16"
+  ]
+ }
+}

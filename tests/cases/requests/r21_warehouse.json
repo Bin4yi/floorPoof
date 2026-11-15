@@ -1,0 +1,13 @@
+{
+ "id": "r21_warehouse",
+ "floor": "warehouse",
+ "request": "Add 2 pallet racks in the empty area east of the east forklift aisle",
+ "must": {
+  "add": [
+   {
+    "type": "pallet_rack",
+    "count": 2
+   }
+  ]
+ }
+}
