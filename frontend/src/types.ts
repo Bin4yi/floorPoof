@@ -1,0 +1,34 @@
+export type Change =
+  | { op: "add"; id: string; type: string; x: number; y: number; rotation: number; line?: string; panel?: string }
+  | { op: "move"; id: string; x?: number; y?: number; rotation?: number; panel?: string }
+  | { op: "remove"; id: string };
+
+export interface Item {
+  id: string; type: string; x: number; y: number; w: number; d: number; h: number;
+  rotation: number; work: [number, number] | null; panel: string | null; line: string | null; seq: number | null;
+}
+export interface ItemType { name: string; label: string; w: number; d: number; h: number; kw: number; heat: boolean; color: string }
+export interface Zone { name: string; kind: string; axis: string | null; x0: number; y0: number; x1: number; y1: number }
+export interface Panel { name: string; kind: string; capacity_kw: number; x: number; y: number; fed_by: string | null }
+export interface Rule { id: string; kind: string; title: string; params: string; status: string; source_url: string | null; source_note: string }
+export interface CheckResult {
+  rule_id: string; kind: string; status: "pass" | "fail" | "skipped"; detail: string; cells: [number, number][];
+  data: Record<string, any>; ms: number; title: string; source_url: string | null; source_note: string;
+}
+export interface Evaluation {
+  valid: boolean; error: string | null; passed: boolean; results: CheckResult[]; failed: string[]; skipped: string[]; ms: number;
+}
+export interface FloorData extends Evaluation {
+  floor: { name: string; label: string; cols: number; rows: number; cell_m: number; width_m: number; depth_m: number;
+           sprinklered: boolean; data_note: string; pack: string; pack_label: string };
+  item_types: ItemType[]; zones: Zone[]; exits: { name: string; x: number; y: number }[];
+  panels: Panel[]; lines: { name: string; direction: string }[]; rules: Rule[]; items: Item[];
+}
+export interface Attempt {
+  proposal_id: string | null; round: number; index: number; note: string; changes: Change[]; valid: boolean;
+  error: string | null; passed: boolean; failed: string[]; ms: number; results: CheckResult[];
+}
+export interface AgentRun {
+  run_id?: string; request?: string; attempts: Attempt[]; error?: string; mode?: string; seconds?: number;
+  outcome: { status: string; best?: string; best_index?: number; open_problems?: string[] };
+}
