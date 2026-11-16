@@ -74,6 +74,20 @@ function FitCamera({ W, D }: { W: number; D: number }) {
   return null;
 }
 
+/** window.__fpProject(x, y, h) gives the screen point of a floor cell, for scripted demos and tests. */
+function ProjectHook({ toWorld }: { toWorld: (x: number, y: number) => [number, number] }) {
+  const { camera, size, gl } = useThree();
+  useEffect(() => {
+    (window as any).__fpProject = (x: number, y: number, h = 0) => {
+      const [wx, wz] = toWorld(x + 0.5, y + 0.5);
+      const v = new THREE.Vector3(wx, h, wz).project(camera);
+      const r = gl.domElement.getBoundingClientRect();
+      return { x: r.left + ((v.x + 1) / 2) * size.width, y: r.top + ((1 - v.y) / 2) * size.height };
+    };
+  }, [camera, size, gl, toWorld]);
+  return null;
+}
+
 function Controls({ target }: { target: [number, number, number] }) {
   const { camera, gl } = useThree();
   useEffect(() => {
@@ -367,6 +381,7 @@ export default function Floor3D(p: Props) {
                         shadow-camera-top={D / 1.2} shadow-camera-bottom={-D / 1.2} />
       <Controls target={target} />
       <FitCamera W={W} D={D} />
+      <ProjectHook toWorld={toWorld} />
 
       <GridFloor W={W} D={D} cols={cols} rows={rows} receiveShadow onPointerMove={onFloorMove} onPointerUp={onFloorUp}
                  onPointerDown={onFloorDown} onClick={onFloorClick} onPointerLeave={() => setHoverCell(null)} />
