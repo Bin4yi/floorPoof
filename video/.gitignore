@@ -1,0 +1,7 @@
+node_modules/
+out/
+# Regenerable media: screen recordings (scripts/record.mjs), BGM copies, processed voice (scripts/vo_post.py)
+public/clips/
+public/audio/*.mp3
+public/audio/vo/*.wav
+public/gallery/

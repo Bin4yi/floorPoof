@@ -1,0 +1,16 @@
+[
+  {"id": "intro", "text": "This is FloorProof. An AI agent plans factory floors, and a graph proves every layout before it can be saved."},
+  {"id": "onefile", "text": "Everything lives in one Relate file, the embedded graph database from Neo4j: floor cells, machines, power panels, lines, rules, and every proposal."},
+  {"id": "model", "text": "Safety rules are Cypher queries. Can every worker reach an exit? A shortest path over walkable cells. Is a panel overloaded? Follow the FED BY chain, and sum the load."},
+  {"id": "floor", "text": "Here's the factory in 3D. Each machine shows its route to the nearest exit and its power cable, read straight from the graph."},
+  {"id": "spots", "text": "Pick a pressing machine for Line B. FloorProof proves the best spots with every check, in a Relate transaction that's rolled back. Press one, and the draft is proven."},
+  {"id": "fail", "text": "Push a table into the aisle, and the broken rule turns red. Only proven layouts can be saved."},
+  {"id": "efficiency", "text": "The graph also measures worker efficiency: walking, material flow, crowding, and elbow room, live after every change."},
+  {"id": "agent", "text": "Or ask the agent. Meta's Muse Spark proposes layouts, and the graph decides which pass. Relate's vector search recalls proven layouts from similar requests."},
+  {"id": "explorer", "text": "The graph explorer runs Relate's WebAssembly build. These queries run inside the browser, with no server."},
+  {"id": "builder", "text": "Draw your own floor for any industry, and the same rules apply."},
+  {"id": "hub", "text": "One embedded graph serves it all: Python transactions, vector search, and WebAssembly in the browser."},
+  {"id": "mcp", "text": "And Relate's MCP server lets coding agents like Claude query the same file."},
+  {"id": "results", "text": "On our tests, the checks block eighteen of twenty unsafe layouts, with no false alarms. The model alone broke rules in five of thirty requests. With the graph in the loop, twenty nine of thirty were proven."},
+  {"id": "outro", "text": "FloorProof. The AI suggests, the graph proves."}
+]
