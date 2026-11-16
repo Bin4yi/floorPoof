@@ -14,6 +14,7 @@ import uuid
 from .checks import run_checks, summary
 from .graph.db import Graph
 from .graph.layout import LayoutError, apply_changes
+from .memory import set_vector
 
 
 class NotProven(Exception):
@@ -56,6 +57,7 @@ def record_proposal(g: Graph, floor: str, changes: list[dict], evaluation: dict,
              {"id": pid, "f": floor, "src": source, "req": request, "round": round_no, "run": run_id,
               "status": status, "changes": json.dumps(changes), "note": note, "err": evaluation.get("error"),
               "ms": evaluation.get("ms", 0.0), "t": time.time()})
+        set_vector(tx, pid, request)  # agent memory: vector of the request text (backend/memory.py)
         for r in evaluation.get("results", []):
             tx.q("""MATCH (p:Proposal {id:$id}) MATCH (ru:Rule {id:$rule})
                     CREATE (p)-[:HAS_RESULT]->(c:CheckResult {passed:$passed, status:$status, detail:$detail, ms:$ms})
@@ -85,6 +87,7 @@ def accept(g: Graph, floor: str, changes: list[dict], *, source: str, request: s
                 WITH p UNWIND $placed AS iid MATCH (i:Item {floor:$f, id:iid}) CREATE (p)-[:PLACES]->(i)""",
              {"id": pid, "f": floor, "src": source, "req": request, "changes": json.dumps(changes),
               "inv": json.dumps(applied["inverse"]), "placed": applied["placed"], "ms": s["ms"], "t": time.time()})
+        set_vector(tx, pid, request)
         holder.update(id=pid, results=results, **s)
 
     g.commit(go)

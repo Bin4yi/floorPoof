@@ -92,3 +92,16 @@ def test_custom_floor_routes(client):
     assert r.status_code == 200 and r.json()["floor"]["floor"]["cols"] == 24
     assert client.delete("/api/floors/shop").status_code == 200
     assert client.delete("/api/floors/factory").status_code == 400  # built-in floors cannot be deleted
+
+def test_export_for_browser_explorer(client):
+    d = client.get("/api/export/factory").json()
+    labels = {n[1] for n in d["nodes"]}
+    types = {r[2] for r in d["rels"]}
+    assert {"Item", "Cell", "PowerPanel", "Rule", "ItemType", "Floor"} <= labels
+    assert {"ADJACENT", "FED_BY", "POWERED_BY", "FEEDS", "HAS_RULE"} <= types and "NEIGHBOR" not in types
+    keys = {n[0] for n in d["nodes"]}
+    assert all(r[0] in keys and r[1] in keys for r in d["rels"])
+
+
+def test_memory_route(client):
+    assert isinstance(client.get("/api/memory/factory", params={"q": "add pressing machines"}).json(), list)

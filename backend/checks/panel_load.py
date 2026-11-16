@@ -1,12 +1,13 @@
 """Panel load: sum of item kW at every level of the power tree, against the continuous limit.
 
-Multi-hop: (Item)-[:POWERED_BY]->(drop box)-[:FED_BY*0..]->(panel) reaches the
-drop box, its sub-panel and the main breaker in one pattern.
+Multi-hop: (Item)-[:POWERED_BY]->(drop box)-[:FED_BY*0..8]->(panel) reaches the
+drop box, its sub-panel and the main breaker in one pattern. The upper bound (8
+levels, far more than any power tree here) follows Relate's own query notice.
 """
 from .base import Ctx, Result, fail, item_cells, ok, skipped
 
 LOADS = """MATCH (p:PowerPanel {floor:$f})
-OPTIONAL MATCH (i:Item)-[:POWERED_BY]->(:PowerPanel)-[:FED_BY*0..]->(p)
+OPTIONAL MATCH (i:Item)-[:POWERED_BY]->(:PowerPanel)-[:FED_BY*0..8]->(p)
 OPTIONAL MATCH (i)-[:IS_A]->(t:ItemType)
 RETURN p.name AS name, p.kind AS kind, p.capacity_kw AS cap, p.x AS x, p.y AS y,
        sum(coalesce(t.kw, 0.0)) AS kw, collect(i.id) AS items

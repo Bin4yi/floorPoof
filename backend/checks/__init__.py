@@ -32,13 +32,17 @@ def run_checks(g: Graph, floor: str) -> list[dict]:
         ctx = Ctx(g, floor, r["cell_m"], bool(r["sprinklered"]), r, cache)
         t0 = time.perf_counter()
         fn = CHECKS.get(r["kind"])
-        if fn is None:
-            res = Result(r["id"], r["kind"], "skipped", f"No check for rule kind {r['kind']!r}.")
-        else:
-            res = fn(ctx)
+        g.trace = []  # record the graph queries this check runs, with Relate's timings
+        try:
+            if fn is None:
+                res = Result(r["id"], r["kind"], "skipped", f"No check for rule kind {r['kind']!r}.")
+            else:
+                res = fn(ctx)
+        finally:
+            queries, g.trace = g.trace, None
         res.ms = round((time.perf_counter() - t0) * 1000, 2)
         res.title, res.source_url, res.source_note = r["title"], r["source_url"], r["source_note"] or ""
-        out.append(res.to_dict())
+        out.append({**res.to_dict(), "queries": queries})
     return out
 
 

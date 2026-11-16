@@ -7,6 +7,7 @@ Relate's one-writer-per-store model.
 from __future__ import annotations
 
 import atexit
+import json
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -24,6 +25,7 @@ class Graph:
         self._ex = ThreadPoolExecutor(max_workers=1, thread_name_prefix=_THREAD_PREFIX)
         self._conn = self._ex.submit(lambda: relate.connect(path, read_only=read_only)).result()
         self.query_ms = 0.0  # total time spent in queries, for check timing
+        self.trace: list | None = None  # when a list, each query's text and Relate's own timing is added
         atexit.register(self.close)  # close before the interpreter shuts down
 
     # -- thread plumbing -------------------------------------------------
@@ -44,6 +46,15 @@ class Graph:
             cur.execute(cypher, params or {})
             rows = cur.fetchall()
             self.query_ms += (time.perf_counter() - t0) * 1000
+            if self.trace is not None:
+                s = cur.consume()
+                ptext = json.dumps(params or {}, default=str)
+                self.trace.append({"cypher": cypher.strip(), "rows": len(rows), "ms": round(s.elapsed_ms or 0, 2),
+                                   "params": (params or {}) if len(ptext) < 1500 else None,
+                                   "parse_ms": round(s.parse_ms or 0, 3), "plan_ms": round(s.plan_ms or 0, 3),
+                                   "execute_ms": round(s.execute_ms or 0, 2),
+                                   "notices": [n.get("code") if isinstance(n, dict) else str(n)
+                                               for n in (s.notifications or [])][:3]})
             return rows
 
         return self.run(go)

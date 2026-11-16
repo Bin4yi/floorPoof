@@ -109,12 +109,16 @@ def build_agent(g: Graph, llm, *, record: bool = True, max_rounds: int = MAX_ROU
     return sg.compile()
 
 
-def run_agent(g: Graph, llm, floor: str, request: str, base_changes: list | None = None, **kw: Any) -> dict:
+def run_agent(g: Graph, llm, floor: str, request: str, base_changes: list | None = None,
+              context: str | None = None, **kw: Any) -> dict:
+    """context: the floor context for the prompt; built from the graph when not given."""
     run_id = f"R-{uuid.uuid4().hex[:8]}"
     t0 = time.perf_counter()
-    state = build_agent(g, llm, **kw).invoke(
-        {"floor": floor, "request": request, "base_changes": base_changes or [], "round": 0, "run_id": run_id,
-         "attempts": [], "feedback": []}, config={"recursion_limit": 4 * MAX_ROUNDS + 4})
+    start = {"floor": floor, "request": request, "base_changes": base_changes or [], "round": 0, "run_id": run_id,
+             "attempts": [], "feedback": []}
+    if context:
+        start["context"] = context
+    state = build_agent(g, llm, **kw).invoke(start, config={"recursion_limit": 4 * MAX_ROUNDS + 4})
     return {"run_id": run_id, "floor": floor, "request": request, "attempts": state["attempts"],
             "outcome": state["outcome"], "rounds": state["round"], "llm": getattr(llm, "name", "?"),
             "llm_seconds": round(state.get("llm_seconds", 0.0), 1),

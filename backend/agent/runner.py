@@ -9,7 +9,9 @@ from pathlib import Path
 from .. import config
 from ..graph.db import Graph
 from .llm import MetaLLM, Recorder, ReplayLLM
+from ..memory import as_prompt, recall
 from .loop import run_agent
+from .prompt import floor_context
 
 
 def replay_path(floor: str, request: str, base_changes: list | None = None, folder: str = "runs") -> Path:
@@ -35,13 +37,18 @@ def make_llm(path: Path, mode: str | None = None):
 
 
 def agent_run(g: Graph, floor: str, request: str, base_changes: list | None = None, *, mode: str | None = None,
-              folder: str = "runs", record: bool = True, **kw) -> dict:
+              folder: str = "runs", record: bool = True, memory: bool = False, **kw) -> dict:
+    """memory=True adds proven layouts for similar past requests to the prompt (Relate vector search).
+    The test set and reproduce.py leave it off, so their prompts stay as recorded."""
     path = replay_path(floor, request, base_changes, folder)
     llm, rec = make_llm(path, mode)
     if llm is None:
         return {"error": "No model available: set META_API_KEY in .env, or use a request that has a recorded "
                          "run in backend/replay.", "attempts": [], "outcome": {"status": "not_run"}}
-    out = run_agent(g, llm, floor, request, base_changes, record=record, **kw)
+    mem = recall(g, floor, request) if memory else []
+    context = (floor_context(g, floor) + "\n\n" + as_prompt(mem)) if mem else None
+    out = run_agent(g, llm, floor, request, base_changes, context=context, record=record, **kw)
+    out["memory"] = [{k: m[k] for k in ("id", "request", "score", "status")} for m in mem]
     if rec is not None and rec.calls:
         rec.save(path, {"floor": floor, "request": request, "base_changes": base_changes or []})
     out["replay_file"] = str(path.relative_to(config.ROOT)).replace("\\", "/")

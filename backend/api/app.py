@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import json
+import mimetypes
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -20,8 +22,10 @@ from ..graph.custom import SpecError, add_item_type, floor_spec, is_custom, remo
 from ..graph.layout import LayoutError
 from ..graph.seed import PACK_FILES, ensure_flows, seed
 from ..metrics import compute as compute_metrics
+from ..memory import backfill, ensure_index, recall
 from ..suggest import suggest
 
+mimetypes.add_type("application/wasm", ".wasm")  # Relate's browser build; Windows may not know the type
 STATE: dict = {}
 
 
@@ -38,12 +42,15 @@ async def lifespan(_app: FastAPI):
         seed(g, [n for n, p in PACK_FILES.items() if p.exists()], user_files=True)
     else:
         ensure_flows(g)
+    ensure_index(g)  # vector index for agent memory
+    backfill(g)
     STATE["g"] = g
     yield
     g.close()
 
 
 app = FastAPI(title="FloorProof", lifespan=lifespan)
+app.add_middleware(GZipMiddleware, minimum_size=2000)
 
 
 class Changes(BaseModel):
@@ -162,7 +169,7 @@ def api_undo(floor: str) -> dict:
 def api_agent(body: AgentRequest) -> dict:
     """Agent loop: the model proposes, the graph checks decide. Replays a recorded run if there is no key."""
     return agent_run(graph(), body.floor, body.request, body.changes or None,
-                     folder="runs" if body.changes else "demo")
+                     folder="runs" if body.changes else "demo", memory=True)
 
 
 @app.post("/api/fix")
@@ -190,6 +197,55 @@ def api_attempts(floor: str, limit: int = 30) -> list[dict]:
                p.note AS note, p.ms AS ms, p.created AS created, p.run_id AS run_id, failed
         ORDER BY p.created DESC LIMIT $n""", {"f": floor, "n": limit})
     return rows
+
+
+@app.get("/api/memory/{floor}")
+def api_memory(floor: str, q: str, k: int = 5) -> list[dict]:
+    """Proven layouts for requests like q, by Relate vector search over Proposal nodes."""
+    return recall(graph(), floor, q, k=k, min_score=0.2)
+
+
+EXPORT_SKIP = ["NEIGHBOR", "HAS_RESULT", "FOR_RULE", "FAILED_AT", "PLACES"]
+
+
+@app.get("/api/export/{floor}")
+def api_export(floor: str) -> dict:
+    """The floor's graph as compact JSON, for the in-browser Relate (WASM) explorer.
+    Leaves out proposal history and the static NEIGHBOR grid; keeps walkable ADJACENT links.
+    nodes: [key, label, props]   rels: [from key, to key, type, props or null]"""
+    g = graph()
+    f = g.one("MATCH (fl:Floor {name:$f})-[:USES_PACK]->(pk:RulePack) RETURN pk.name AS pack", {"f": floor})
+    if not f:
+        raise HTTPException(404, f"unknown floor {floor}")
+    p = {"f": floor, "pack": f["pack"], "skip": EXPORT_SKIP}
+    node_q = [
+        "MATCH (n) WHERE n.floor = $f AND NOT n:Proposal AND NOT n:CheckResult RETURN n",
+        "MATCH (n:Floor {name:$f}) RETURN n",
+        "MATCH (n:RulePack {name:$pack}) RETURN n",
+        "MATCH (:RulePack {name:$pack})-[:HAS_RULE]->(n:Rule) RETURN n",
+        "MATCH (n:ItemType {pack:$pack}) RETURN n",
+    ]
+    rel_q = [
+        "MATCH (a)-[r]->(b) WHERE a.floor = $f AND b.floor = $f AND NOT type(r) IN $skip RETURN a, r, b",
+        "MATCH (a:Item {floor:$f})-[r:IS_A]->(b) RETURN a, r, b",
+        "MATCH (a:Floor {name:$f})-[r:USES_PACK]->(b) RETURN a, r, b",
+        "MATCH (a:RulePack {name:$pack})-[r:HAS_RULE]->(b) RETURN a, r, b",
+        "MATCH (a:ItemType {pack:$pack})-[r]->(b:ItemType) RETURN a, r, b",
+        "MATCH (a:Rule)-[r:APPLIES_TO]->(b:ItemType {pack:$pack}) RETURN a, r, b",
+    ]
+    nodes: dict = {}
+    for q in node_q:
+        for row in g.q(q.replace("RETURN n", "RETURN elementId(n) AS k, labels(n)[0] AS label, properties(n) AS props"), p):
+            nodes[row["k"]] = [row["k"], row["label"],
+                               {k: v for k, v in row["props"].items()
+                                if k != "req_vec" and not (isinstance(v, str) and len(v) > 400)}]
+    rels = []
+    for q in rel_q:
+        q = q.replace("RETURN a, r, b", "RETURN elementId(a) AS s, elementId(b) AS t, type(r) AS type, properties(r) AS props")
+        for row in g.q(q, p):
+            if row["s"] in nodes and row["t"] in nodes:
+                rels.append([row["s"], row["t"], row["type"], row["props"] or None])
+    return {"floor": floor, "nodes": list(nodes.values()), "rels": rels}
 
 
 class SuggestRequest(BaseModel):
