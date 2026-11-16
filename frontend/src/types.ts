@@ -18,7 +18,13 @@ export interface Rule { id: string; kind: string; title: string; params: string;
 export interface CheckResult {
   rule_id: string; kind: string; status: "pass" | "fail" | "skipped"; detail: string; cells: [number, number][];
   data: Record<string, any>; ms: number; title: string; source_url: string | null; source_note: string;
+  queries?: QueryTrace[];
 }
+export interface QueryTrace {
+  cypher: string; rows: number; ms: number; parse_ms: number; plan_ms: number; execute_ms: number;
+  notices: string[]; params: Record<string, any> | null;
+}
+export interface Memory { id: string; request: string; score: number; status: string; note?: string; changes?: Change[] }
 export interface Evaluation {
   metrics?: Metrics;
   valid: boolean; error: string | null; passed: boolean; results: CheckResult[]; failed: string[]; skipped: string[]; ms: number;
@@ -37,7 +43,7 @@ export interface Attempt {
   error: string | null; passed: boolean; failed: string[]; ms: number; results: CheckResult[];
 }
 export interface AgentRun {
-  run_id?: string; request?: string; attempts: Attempt[]; error?: string; mode?: string; seconds?: number;
+  run_id?: string; request?: string; attempts: Attempt[]; memory?: Memory[]; error?: string; mode?: string; seconds?: number;
   outcome: { status: string; best?: string; best_index?: number; open_problems?: string[] };
 }
 export interface Pick {

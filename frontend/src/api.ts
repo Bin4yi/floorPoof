@@ -1,4 +1,4 @@
-import type { AgentRun, Change, Evaluation, FloorData, FloorSpec, ItemDraft, ItemType, Suggestion } from "./types";
+import type { Memory, AgentRun, Change, Evaluation, FloorData, FloorSpec, ItemDraft, ItemType, Suggestion } from "./types";
 
 async function call<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const r = await fetch(path, body === undefined && !method ? undefined : {
@@ -38,5 +38,6 @@ export const api = {
   editFloor: (name: string, spec: FloorSpec) =>
     call<{ name: string; floor: FloorData; kept_items: number; sent_items: number }>(`/api/floors/${name}`, { spec }, "PUT"),
   floorSpec: (name: string) => call<FloorSpec>(`/api/floors/${name}/spec`),
+  memory: (floor: string, q: string) => call<Memory[]>(`/api/memory/${floor}?q=${encodeURIComponent(q)}`),
   deleteFloor: (name: string) => call<{ deleted: string }>(`/api/floors/${name}`, undefined, "DELETE"),
 };

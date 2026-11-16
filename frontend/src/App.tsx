@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Floor3D, { type Load, type PathInfo } from "./Floor3D";
 import BuilderPanel, { CELL, blankSpec, useBuild } from "./Builder";
 import ItemMaker from "./ItemMaker";
 import Efficiency, { type Layer } from "./Efficiency";
+import type { Preset } from "./Explorer";
+// Loaded only when opened: it brings Relate's WebAssembly build (about 7 MB) into the tab.
+const Explorer = lazy(() => import("./Explorer"));
 import { api, type FloorRow } from "./api";
 import { applyDraft, nextId, size } from "./draft";
 import { shapeOf } from "./models";
-import type { AgentRun, Change, CheckResult, Evaluation, FloorData, FloorSpec, Item, Pick, Suggestion } from "./types";
+import type { AgentRun, Change, CheckResult, Evaluation, FloorData, FloorSpec, Item, Memory, Pick, QueryTrace, Suggestion } from "./types";
 
 type Status = Awaited<ReturnType<typeof api.status>>;
 const GLYPH: Record<string, string> = {
@@ -42,6 +45,10 @@ export default function App() {
   const toggleLayer = (k: Layer) => setLayers((l) => ({ ...l, [k]: !l[k] }));
   const [rightTab, setRightTab] = useState<"efficiency" | "rules">("efficiency");
   const [history, setHistory] = useState<{ t: number; index: number }[]>([]);
+  const [center, setCenter] = useState<"floor" | "graph">("floor");
+  const [explorerReq, setExplorerReq] = useState<Preset | null>(null);
+  const [memories, setMemories] = useState<Memory[]>([]);
+  const openInExplorer = (q: QueryTrace) => { setExplorerReq({ title: "", query: q.cypher, params: q.params ?? {} }); setCenter("graph"); };
   const [showPower, setShowPower] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
   const [maker, setMaker] = useState(false);
@@ -66,6 +73,8 @@ export default function App() {
       if (qs.get("paths")) setShowPaths(true);
       for (const k of (qs.get("layers") ?? "").split(",")) if (k) setLayers((l) => ({ ...l, [k]: true }));
       if (qs.get("tab") === "rules") setRightTab("rules");
+      if (qs.get("view") === "graph") setCenter("graph");
+      if (qs.get("explore")) import("./Explorer").then((m) => setExplorerReq(m.presets(qs.get("item"))[Number(qs.get("explore"))] ?? null));
       if (qs.get("build")) { setSpecState(blankSpec()); setTab("build"); }
       if (qs.get("maker")) setMaker(true);
       if (qs.get("agent")) { setRequest(qs.get("agent")!); setTab("agent"); setTimeout(() => document.getElementById("run-agent")?.click(), 300); }
@@ -135,6 +144,12 @@ export default function App() {
     }, 220);
     return () => clearTimeout(t);
   }, [placing, placeLine, placePanel, selected?.id, selected?.rotation, changes, floorName, tab, attempt, data]);
+
+  useEffect(() => {
+    if (tab !== "agent" || request.trim().length < 6) { setMemories([]); return; }
+    const t = setTimeout(() => api.memory(floorName, request).then(setMemories).catch(() => setMemories([])), 350);
+    return () => clearTimeout(t);
+  }, [request, floorName, tab, run]);
 
   const push = useCallback((c: Change) => { setChanges((cs) => [...cs, c]); setMessage(null); }, []);
   const place = (x: number, y: number) => {
@@ -344,6 +359,7 @@ export default function App() {
                   <p className="hint">Recorded runs (work with no API key):{" "}
                     {replays.map((r) => <a key={r.request} onClick={() => setRequest(r.request)}>{r.request}</a>)}</p>)}
                 <button id="run-agent" className="primary" disabled={!!busy || !request.trim()} onClick={() => runAgent(false)}>Propose layouts</button>
+                <MemoryList memories={memories} used={run?.memory} />
                 {run && <Attempts run={run} view={viewAttempt} onView={setViewAttempt} onAccept={acceptAttempt} />}
               </>
             )}
@@ -352,6 +368,18 @@ export default function App() {
       </aside>
 
       <main>
+        {!building && (
+          <div className="center-switch">
+            <button className={center === "floor" ? "on" : ""} onClick={() => setCenter("floor")}>3D floor</button>
+            <button className={center === "graph" ? "on" : ""} onClick={() => setCenter("graph")}>Graph explorer <small>Relate in browser</small></button>
+          </div>
+        )}
+        {center === "graph" && !building && (
+          <Suspense fallback={<div className="ex-loading"><div className="spinner dark" />Loading Relate (WebAssembly) ...</div>}>
+            <Explorer floor={floorName} itemId={selectedId ?? data.items[0]?.id ?? null} request={explorerReq} onRequestDone={() => setExplorerReq(null)} />
+          </Suspense>
+        )}
+        <div className={center === "graph" && !building ? "hidden" : "floor-wrap"}>
         <Floor3D floor={building ? { cols: build.cols, rows: build.rows, cell_m: CELL } : data.floor}
                  itemTypes={data.item_types}
                  zones={building ? spec.zones : data.zones} exits={building ? spec.exits : data.exits}
@@ -365,7 +393,8 @@ export default function App() {
                  build={building ? build.hooks : undefined}
                  onSelect={(id) => { setSelectedId(id); if (id) setPlacing(null); }} onPlace={place}
                  onMove={(id, x, y) => push({ op: "move", id, x, y })} onHover={setHover} onPick={applyPick} />
-        {!building && (
+        </div>
+        {!building && center === "floor" && (
           <div className="hud">
             <div className={`proof ${shown?.passed ? "ok" : "bad"}`}>
               <Ring pass={nPass} fail={nFail} skip={nSkip} />
@@ -378,7 +407,7 @@ export default function App() {
             {mainLoad !== undefined && <div className={`stat ${mainLoad > 1 ? "bad" : mainLoad > 0.85 ? "warn" : ""}`}><small>main load</small><b>{Math.round(mainLoad * 100)}%</b></div>}
           </div>
         )}
-        {!building && (
+        {!building && center === "floor" && (
           <div className="toggles">
             <button className={showHeat ? "on" : ""} onClick={() => setShowHeat(!showHeat)}>▦ Best-spot map</button>
             <button className={showPaths ? "on" : ""} onClick={() => setShowPaths(!showPaths)}>⇢ Exit paths</button>
@@ -426,7 +455,7 @@ export default function App() {
             <h3>Checks {shown?.passed ? <span className="ok">all pass</span> : <span className="bad">failed</span>}
               <small> {shown?.ms?.toFixed(0)} ms</small></h3>
             {shown && shown.valid === false && <p className="bad">Invalid layout: {shown.error}</p>}
-            {shown?.results.map((r) => <CheckRow key={r.rule_id} r={r} />)}
+            {shown?.results.map((r) => <CheckRow key={r.rule_id} r={r} onExplore={openInExplorer} />)}
             {loads.length > 0 && <LoadBars loads={loads} />}
           </>
         )}
@@ -475,13 +504,47 @@ function Picks({ s, busy, moving, onPick }: { s: Suggestion | null; busy: boolea
   );
 }
 
-function CheckRow({ r }: { r: CheckResult }) {
+function MemoryList({ memories, used }: { memories: Memory[]; used?: Memory[] }) {
+  if (!memories.length && !used?.length) return null;
+  return (
+    <div className="card memory">
+      <div className="card-head"><b>Agent memory</b><small>Relate vector search</small></div>
+      {used && used.length > 0 && <p className="hint">The last run gave the agent {used.length} proven layout{used.length === 1 ? "" : "s"} from similar requests as hints.</p>}
+      {memories.length > 0 && <p className="hint">Proven layouts for similar past requests on this floor:</p>}
+      {memories.map((m) => (
+        <div key={m.id} className="mem">
+          <span className="score">{Math.round(m.score * 100)}%</span>
+          <div><b>{m.request}</b><small>{m.status} · {m.changes?.length ?? 0} changes{m.note ? ` · ${m.note}` : ""}</small></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CheckRow({ r, onExplore }: { r: CheckResult; onExplore: (q: QueryTrace) => void }) {
+  const [open, setOpen] = useState(false);
   const icon = r.status === "pass" ? "✓" : r.status === "fail" ? "✗" : "–";
+  const qs = r.queries ?? [];
+  const engine = qs.reduce((a, q) => a + q.ms, 0);
   return (
     <div className={`check ${r.status}`}>
       <div><b>{icon} {r.title}</b> <small>{r.rule_id} · {r.ms.toFixed(0)} ms</small></div>
       <div className="detail">{r.status === "skipped" ? `Not checked: ${r.detail}` : r.detail}</div>
       <div className="src">{r.source_url ? <a href={r.source_url} target="_blank" rel="noreferrer">{r.source_note}</a> : r.source_note}</div>
+      {qs.length > 0 && (
+        <button className="qtoggle" onClick={() => setOpen(!open)}>
+          {open ? "▾" : "▸"} {qs.length} graph quer{qs.length === 1 ? "y" : "ies"} · {engine.toFixed(1)} ms inside Relate</button>)}
+      {open && qs.map((q, i) => (
+        <div key={i} className="query">
+          <pre>{q.cypher}</pre>
+          <div className="qmeta">
+            <span>{q.rows} row{q.rows === 1 ? "" : "s"}</span>
+            <span>parse {q.parse_ms} · plan {q.plan_ms} · run {q.execute_ms} ms</span>
+            {q.notices.map((n) => <span key={n} className="notice">{n.split(".").pop()}</span>)}
+            {q.params && <button className="small" onClick={() => onExplore(q)}>Run in browser</button>}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
