@@ -1,0 +1,19 @@
+{
+ "floor": "warehouse",
+ "request": "Add 4 pressing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 07:50:22",
+ "calls": [
+  {
+   "hash": "c5dcaa4323f2aa62",
+   "response": "{\"layouts\": [{\"note\": \"Line B 4 presses in central free bay north of walk aisle, clear of forklift aisles\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 22, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 27, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 48, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}]}, {\"note\": \"Fallback if pressing_machine type not defined - using packing_bench footprint as press, same Line B\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 22, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 27, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 32, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 46, \"y\": 16, \"rotation\": 0, \"line\": \"B\"}]}]}",
+   "seconds": 11.14
+  },
+  {
+   "hash": "ffad2280f0a42389",
+   "response": "{\"layouts\": [{\"note\": \"Add 4 benches as pressing stations at y=16 clearing forklift aisles; line B unavailable so omit line tag - use bench type allowed\", \"changes\": [{\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 22, \"y\": 16, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 27, \"y\": 16, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 32, \"y\": 16, \"rotation\": 0}, {\"op\": \"add\", \"type\": \"packing_bench\", \"x\": 46, \"y\": 16, \"rotation\": 0}]}]}",
+   "seconds": 10.98
+  }
+ ]
+}

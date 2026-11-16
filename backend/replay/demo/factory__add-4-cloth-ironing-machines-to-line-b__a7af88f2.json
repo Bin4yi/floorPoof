@@ -1,0 +1,19 @@
+{
+ "floor": "factory",
+ "request": "Add 4 cloth ironing machines to Line B",
+ "base_changes": [],
+ "model": "muse-spark-1.1",
+ "recorded_at": "2026-11-16 08:20:03",
+ "calls": [
+  {
+   "hash": "77353b0e2c5501ae",
+   "response": "{\"layouts\": [{\"note\": \"Add 4 pressing machines to Line B beyond cross aisle to keep aisle clear, using DB-X1/X2 for power\", \"changes\": [{\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}]}]}",
+   "seconds": 6.95
+  },
+  {
+   "hash": "1cbb12dab2052836",
+   "response": "{\"layouts\": [{\"note\": \"Split 4 new pressings across SUB-N/SUB-F to respect sub-panel limits; move Line-C sewing to DB-X1 to free DB-C for a pressing\", \"changes\": [{\"op\": \"move\", \"id\": \"C1\", \"x\": 2, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C2\", \"x\": 5, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C3\", \"x\": 8, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C4\", \"x\": 11, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C5\", \"x\": 14, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C6\", \"x\": 17, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C7\", \"x\": 20, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"move\", \"id\": \"C8\", \"x\": 23, \"y\": 24, \"rotation\": 0, \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 32, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X1\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 36, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-X2\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 40, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-C\"}, {\"op\": \"add\", \"type\": \"pressing_machine\", \"x\": 44, \"y\": 9, \"rotation\": 0, \"line\": \"B\", \"panel\": \"DB-P2\"}]}]}",
+   "seconds": 17.82
+  }
+ ]
+}
