@@ -42,6 +42,9 @@ def run(ctx: Ctx) -> Result:
         reasons.append(f"{', '.join(ids)} cannot walk to any exit")
         cells += [w for _, w in stuck] + item_cells(ctx, ids)
 
+    # The walking path of each item to its nearest exit, for drawing in the 3D view.
+    paths = {iid: {"exit": n["exit"], "cells": n["cells"], "m": n["hops"] * ctx.cell_m}
+             for iid, n in near.items() if n["hops"] is not None}
     if not reasons:
-        return ok(ctx, f"All {len(near)} work positions reach an exit.", positions=len(near))
-    return fail(ctx, "; ".join(reasons) + ".", cells, positions=len(near))
+        return ok(ctx, f"All {len(near)} work positions reach an exit.", positions=len(near), paths=paths)
+    return fail(ctx, "; ".join(reasons) + ".", cells, positions=len(near), paths=paths)

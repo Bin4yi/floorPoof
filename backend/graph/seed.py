@@ -59,7 +59,10 @@ def seed_pack(g: Graph, pack: dict) -> None:
     g.q("""UNWIND $types AS t
            MERGE (it:ItemType {pack:$pack, name:t.name})
            ON CREATE SET it.label = t.label, it.w = t.w, it.d = t.d, it.h = t.h, it.kw = t.kw, it.heat = t.heat,
-                         it.color = t.color""", {"pack": pk["name"], "types": pack["item_types"]})
+                         it.color = t.color, it.shape = t.shape, it.custom = coalesce(t.custom, false),
+                         it.description = t.description""",
+        {"pack": pk["name"], "types": [{"shape": None, "custom": False, "description": None, **t}
+                                       for t in pack["item_types"]]})
     seps = [{**s, "min_m": _num_or_none(s["min_m"])} for s in pack.get("separations", [])]
     if seps:
         g.q("""UNWIND $seps AS s MATCH (a:ItemType {pack:$pack, name:s.from}), (b:ItemType {pack:$pack, name:s.to})
@@ -80,8 +83,8 @@ def seed_pack(g: Graph, pack: dict) -> None:
     rules = [{**r, "params": json.dumps({k: _num_or_none(v) for k, v in r["params"].items()})} for r in pack["rules"]]
     g.q("""UNWIND $rules AS r MATCH (p:RulePack {name:$pack})
            MERGE (ru:Rule {id:r.id})
-           ON CREATE SET ru.kind = r.kind, ru.title = r.title, ru.params = r.params, ru.status = r.status,
-                         ru.source_url = r.source_url, ru.source_note = r.source_note
+           SET ru.kind = r.kind, ru.title = r.title, ru.params = r.params, ru.status = r.status,
+               ru.source_url = r.source_url, ru.source_note = r.source_note
            MERGE (p)-[:HAS_RULE]->(ru)""", {"pack": pk["name"], "rules": rules})
     for s in pack.get("separations", []):
         g.q("""MATCH (p:RulePack {name:$pack})-[:HAS_RULE]->(r:Rule {kind:'separation'})
@@ -96,6 +99,17 @@ def seed_pack(g: Graph, pack: dict) -> None:
         rebuild_feeds(g, f, line["name"])
 
 
-def seed(g: Graph, names: list[str]) -> None:
-    for n in names:
-        seed_pack(g, load_pack(n))
+def seed(g: Graph, names: list[str], *, user_files: bool = False) -> None:
+    """Seed the named packs. user_files=True also loads the user's custom floors and
+    custom item types (packs/custom/). The test set never does."""
+    custom_dir = PACKS_DIR / "custom"
+    extras = {}
+    if user_files and (custom_dir / "types.json").exists():
+        extras = json.loads((custom_dir / "types.json").read_text(encoding="utf-8"))
+    packs = [load_pack(n) for n in names]
+    if user_files and custom_dir.exists():
+        packs += [load_pack(p) for p in sorted(custom_dir.glob("*.json")) if p.name != "types.json"]
+    for pack in packs:
+        have = {t["name"] for t in pack["item_types"]}
+        pack["item_types"] += [t for t in extras.get(pack["pack"]["name"], []) if t["name"] not in have]
+        seed_pack(g, pack)

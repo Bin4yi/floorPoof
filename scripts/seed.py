@@ -24,7 +24,7 @@ def main() -> None:
         out.unlink()
     t0 = time.perf_counter()
     g = Graph(str(out))
-    seed(g, a.packs)
+    seed(g, a.packs, user_files=True)  # also the custom floors and item types in packs/custom/
     counts = g.q("MATCH (n) RETURN labels(n)[0] AS label, count(*) AS n ORDER BY label")
     rels = g.one("MATCH ()-[r]->() RETURN count(r) AS n")
     g.close()

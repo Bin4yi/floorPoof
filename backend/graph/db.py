@@ -89,5 +89,8 @@ class Graph:
     def close(self) -> None:
         if getattr(self, "_conn", None) is not None:
             conn, self._conn = self._conn, None
-            self.run(conn.close)
+            try:
+                self.run(conn.close)
+            except RuntimeError:  # the worker pool was already shut down at interpreter exit
+                pass
         self._ex.shutdown(wait=True)

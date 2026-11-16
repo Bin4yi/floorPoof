@@ -15,8 +15,11 @@ from ..agent.runner import agent_run, live_available, replay_path
 from ..checks import run_checks, summary
 from ..engine import NotProven, accept, evaluate, undo
 from ..graph.db import Graph
+from ..agent.describe import describe
+from ..graph.custom import SpecError, add_item_type, floor_spec, is_custom, remove_floor, save_floor
 from ..graph.layout import LayoutError
 from ..graph.seed import PACK_FILES, seed
+from ..suggest import suggest
 
 STATE: dict = {}
 
@@ -31,7 +34,7 @@ async def lifespan(_app: FastAPI):
     fresh = not store.exists()
     g = Graph(str(store))
     if fresh:
-        seed(g, [n for n, p in PACK_FILES.items() if p.exists()])
+        seed(g, [n for n, p in PACK_FILES.items() if p.exists()], user_files=True)
     STATE["g"] = g
     yield
     g.close()
@@ -70,10 +73,13 @@ def _floor_payload(g: Graph, floor: str) -> dict:
         if i["work"] == [None, None]:
             i["work"] = None
     results = run_checks(g, floor)
+    f["custom"] = is_custom(floor)
     return {
         "floor": f,
         "item_types": g.q("""MATCH (t:ItemType {pack:$pack}) RETURN t.name AS name, t.label AS label, t.w AS w,
-                             t.d AS d, t.h AS h, t.kw AS kw, t.heat AS heat, t.color AS color ORDER BY name""", p),
+                             t.d AS d, t.h AS h, t.kw AS kw, t.heat AS heat, t.color AS color, t.shape AS shape,
+                             coalesce(t.custom, false) AS custom, t.description AS description
+                             ORDER BY custom, name""", p),
         "zones": g.q("""MATCH (z:Zone {floor:$f}) RETURN z.name AS name, z.kind AS kind, z.axis AS axis,
                         z.x0 AS x0, z.y0 AS y0, z.x1 AS x1, z.y1 AS y1 ORDER BY name""", p),
         "exits": g.q("MATCH (e:Exit {floor:$f}) RETURN e.name AS name, e.x AS x, e.y AS y ORDER BY name", p),
@@ -96,6 +102,8 @@ def status() -> dict:
     floors = g.q("MATCH (f:Floor)-[:USES_PACK]->(p:RulePack) RETURN f.name AS name, f.label AS label, "
                  "p.label AS pack ORDER BY name")
     mode = config.LLM_MODE
+    for f in floors:
+        f["custom"] = is_custom(f["name"])
     return {"floors": floors, "store": Path(config.STORE).name, "storage": "single file (.rl)",
             "llm": {"mode": mode, "live": live_available() and mode != "replay", "model": config.META_MODEL}}
 
@@ -178,6 +186,103 @@ def api_attempts(floor: str, limit: int = 30) -> list[dict]:
                p.note AS note, p.ms AS ms, p.created AS created, p.run_id AS run_id, failed
         ORDER BY p.created DESC LIMIT $n""", {"f": floor, "n": limit})
     return rows
+
+
+class SuggestRequest(BaseModel):
+    floor: str
+    changes: list[dict] = Field(default_factory=list)
+    type: str | None = None
+    rotation: int = 0
+    line: str | None = None
+    panel: str | None = None
+    move_id: str | None = None
+
+
+@app.post("/api/suggest")
+def api_suggest(body: SuggestRequest) -> dict:
+    """Best spots for one item: a fast scan, then the top picks are proven by the real checks."""
+    if not body.type and not body.move_id:
+        raise HTTPException(400, "give a type or an item to move")
+    try:
+        return suggest(graph(), body.floor, body.changes, body.type, body.rotation, body.line, body.panel, body.move_id)
+    except LayoutError as e:
+        raise HTTPException(400, str(e))
+
+
+class Describe(BaseModel):
+    text: str
+
+
+@app.post("/api/item-types/describe")
+def api_describe(body: Describe) -> dict:
+    """Fill the new-item form from a plain description. The user checks the values before saving."""
+    try:
+        return describe(body.text)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+class NewItemType(BaseModel):
+    floor: str
+    label: str
+    w_m: float
+    d_m: float
+    h_m: float
+    kw: float = 0
+    heat: bool = False
+    color: str = "#5ad1ff"
+    shape: str = "machine"
+    description: str = ""
+
+
+@app.post("/api/item-types")
+def api_add_item_type(body: NewItemType) -> dict:
+    try:
+        t = add_item_type(graph(), body.floor, body.model_dump())
+    except SpecError as e:
+        raise HTTPException(400, str(e))
+    return {"item_type": t, "floor": _floor_payload(graph(), body.floor)}
+
+
+class FloorSpec(BaseModel):
+    spec: dict
+
+
+@app.post("/api/floors")
+def api_create_floor(body: FloorSpec) -> dict:
+    """Create a custom floor from what the user drew. It gets the generic rule pack."""
+    try:
+        pack = save_floor(graph(), body.spec)
+    except SpecError as e:
+        raise HTTPException(400, str(e))
+    return {"name": pack["floor"]["name"], "floor": _floor_payload(graph(), pack["floor"]["name"])}
+
+
+@app.put("/api/floors/{floor}")
+def api_edit_floor(floor: str, body: FloorSpec) -> dict:
+    try:
+        pack = save_floor(graph(), {**body.spec, "name": floor}, editing=True)
+    except SpecError as e:
+        raise HTTPException(400, str(e))
+    return {"name": floor, "floor": _floor_payload(graph(), floor),
+            "kept_items": len(pack["items"]), "sent_items": len(body.spec.get("items", []))}
+
+
+@app.get("/api/floors/{floor}/spec")
+def api_floor_spec(floor: str) -> dict:
+    try:
+        return floor_spec(graph(), floor)
+    except SpecError as e:
+        raise HTTPException(404, str(e))
+
+
+@app.delete("/api/floors/{floor}")
+def api_delete_floor(floor: str) -> dict:
+    try:
+        remove_floor(graph(), floor)
+    except SpecError as e:
+        raise HTTPException(400, str(e))
+    return {"deleted": floor}
 
 
 DIST = config.ROOT / "frontend" / "dist"
