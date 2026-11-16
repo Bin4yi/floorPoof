@@ -63,7 +63,7 @@ rules, every proposal and every check result.
   commits only if every check passes.
 - **Rules are data.** A `RulePack` has `Rule` nodes (kind, numbers, source link). The engine reads the rules of
   the floor's pack and runs the check for each rule kind. The warehouse pack was added as data only
-  (`backend/packs/warehouse.json`), with no new engine code.
+  (`backend/packs/warehouse.json`), with no new engine code. Floors drawn in the app become packs the same way.
 - **Why Relate:** one embedded file, no server, openCypher with real path search, and transactions with
   rollback. That fits a planning tool you can hand to someone as a single file.
 
@@ -88,7 +88,8 @@ Notes from testing Relate on day 1, including timings and one bug we found, are 
 
 Code: `backend/graph` (Relate wrapper, schema, seed, layout writer), `backend/checks` (one file per check),
 `backend/engine.py` (draft, accept, undo), `backend/agent` (LangGraph loop, Meta model client, replay),
-`backend/api` (FastAPI), `frontend` (React, TypeScript, React Three Fiber; items are plain boxes).
+`backend/suggest.py` (best spots), `backend/graph/custom.py` (custom floors and items), `backend/api` (FastAPI),
+`frontend` (React, TypeScript, React Three Fiber; item models are built from boxes and cylinders in code, no model files).
 
 ## Setup and run (Windows)
 
@@ -136,6 +137,26 @@ layout. Force replay even with a key:
 .\scripts\run.ps1 -Replay
 .\scripts\py.ps1 scripts/reproduce.py --mode replay
 ```
+
+## Your own items, your own floors, best spots
+
+- **Describe a new item.** In Manual edit, click **+ Describe a new item** and type something like
+  "Industrial dryer, 2 x 1.5 m, 1.8 m tall, 6 kW". With a key, Muse Spark fills in the form; with no key, a simple
+  text parser does. Values that were not in your text are marked *guess*. You check every value, then save. The item
+  becomes an `ItemType` node in the floor's pack and is checked like any other item. Saved in
+  `backend/packs/custom/types.json`.
+- **Build a whole floor.** Click **+ New floor**. Set the size, then draw exits, aisles, forklift aisles, areas,
+  main breakers, sub-panels and drop boxes, and add production lines. Saving builds the floor graph and runs every
+  check. A custom floor gets the same sourced rules as the demo floors (no overlap, exit reach, exit distance from
+  IBC Table 1017.2 F-1, aisle width 0.711 m, panel load 80%, line flow). You can type your own exit distance limit
+  with its source. The forklift aisle width stays TBD unless you give one. Saved in `backend/packs/custom/<id>.json`.
+  **Edit floor** re-draws it and keeps the items.
+- **Best spots and paths.** Pick an item type, or select an item, and the floor shows a heat map of where it fits.
+  The map is a quick scan of the draft graph state. The numbered beacons are the best picks, and each one was
+  proven by the full graph checks in a rolled-back draft. Click a beacon or press its number to use it. The green
+  ribbon is the walk from that spot to the nearest exit. Exit paths come from the same `shortestPath` query that
+  the exit checks use. The scan only suggests; pass or fail still comes from the checks.
+- Deep links for demos: `/?floor=warehouse&place=pallet_rack&rot=90`, `/?select=R1&paths=1`, `/?build=1`.
 
 In the app, the **Ask the agent** tab lists the recorded requests you can run without a key. **Manual edit**
 needs no model at all: pick an item, click the floor, drag to move, R to rotate, Delete to remove. Every change
