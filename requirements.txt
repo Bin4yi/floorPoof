@@ -1,0 +1,6 @@
+relate-db==1.0.1
+fastapi
+uvicorn[standard]
+langgraph
+httpx
+pytest
