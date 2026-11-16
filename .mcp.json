@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "floorproof-graph": {
+      "command": "wsl",
+      "args": ["-d", "Ubuntu", "--", "bash", "-lc",
+               "exec ~/.local/bin/relate serve --mcp stdio --database floorproof.rl --read-only"]
+    }
+  }
+}
