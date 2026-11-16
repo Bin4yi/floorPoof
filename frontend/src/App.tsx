@@ -1,14 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Floor3D from "./Floor3D";
-import { api } from "./api";
-import { applyDraft, nextId } from "./draft";
-import type { AgentRun, Change, CheckResult, Evaluation, FloorData } from "./types";
+import Floor3D, { type Load, type PathInfo } from "./Floor3D";
+import BuilderPanel, { CELL, blankSpec, useBuild } from "./Builder";
+import ItemMaker from "./ItemMaker";
+import { api, type FloorRow } from "./api";
+import { applyDraft, nextId, size } from "./draft";
+import { shapeOf } from "./models";
+import type { AgentRun, Change, CheckResult, Evaluation, FloorData, FloorSpec, Item, Pick, Suggestion } from "./types";
 
 type Status = Awaited<ReturnType<typeof api.status>>;
+const GLYPH: Record<string, string> = {
+  machine: "⚙", press: "▤", table: "▭", cutting: "✂", packing: "▣", rack: "▥", rolls: "◎", pallet: "▦", drums: "◍",
+  tank: "◉", conveyor: "⇉", robot: "✇", box: "▢",
+};
 
 export default function App() {
   const [status, setStatus] = useState<Status | null>(null);
-  const [floorName, setFloorName] = useState("factory");
+  // Deep links for demos: ?floor=warehouse&place=pallet_rack&line=B&select=R1&paths=1&build=1
+  const qs = useMemo(() => new URLSearchParams(window.location.search), []);
+  const [floorName, setFloorName] = useState(qs.get("floor") ?? "factory");
   const [data, setData] = useState<FloorData | null>(null);
   const [changes, setChanges] = useState<Change[]>([]);
   const [evalResult, setEvalResult] = useState<Evaluation | null>(null);
@@ -16,7 +25,7 @@ export default function App() {
   const [placing, setPlacing] = useState<{ type: string; rotation: number } | null>(null);
   const [placeLine, setPlaceLine] = useState("");
   const [placePanel, setPlacePanel] = useState("");
-  const [tab, setTab] = useState<"manual" | "agent">("manual");
+  const [tab, setTab] = useState<"manual" | "agent" | "build">("manual");
   const [request, setRequest] = useState("Add 4 pressing machines to Line B");
   const [replays, setReplays] = useState<{ request: string }[]>([]);
   const [run, setRun] = useState<AgentRun | null>(null);
@@ -24,12 +33,35 @@ export default function App() {
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
+  const [sugBusy, setSugBusy] = useState(false);
+  const [showPaths, setShowPaths] = useState(false);
+  const [showPower, setShowPower] = useState(true);
+  const [showHeat, setShowHeat] = useState(true);
+  const [maker, setMaker] = useState(false);
+  const [spec, setSpecState] = useState<FloorSpec>(blankSpec());
+  const [editing, setEditing] = useState<string | null>(null);
   const evalSeq = useRef(0);
+  const sugSeq = useRef(0);
+  const setSpec = useCallback((f: (s: FloorSpec) => FloorSpec) => setSpecState(f), []);
+  const build = useBuild(spec, setSpec);
 
-  useEffect(() => { api.status().then(setStatus).catch((e) => setMessage(String(e))); }, []);
+  const refreshStatus = () => api.status().then(setStatus).catch((e) => setMessage(String(e)));
+  useEffect(() => { refreshStatus(); }, []);
   useEffect(() => {
     setData(null); setChanges([]); setRun(null); setViewAttempt(null); setSelectedId(null); setPlacing(null);
-    api.floor(floorName).then(setData).catch((e) => setMessage(String(e)));
+    setPlaceLine(""); setPlacePanel(""); setSuggestion(null); setMaker(false);
+    api.floor(floorName).then((d) => {
+      setData(d);
+      if (qs.get("place") && d.item_types.some((t) => t.name === qs.get("place"))) {
+        setPlacing({ type: qs.get("place")!, rotation: Number(qs.get("rot") ?? 0) });
+        setPlaceLine(qs.get("line") ?? "");
+      } else if (qs.get("select")) setSelectedId(qs.get("select"));
+      if (qs.get("paths")) setShowPaths(true);
+      if (qs.get("build")) { setSpecState(blankSpec()); setTab("build"); }
+      if (qs.get("maker")) setMaker(true);
+      qs.delete("place"); qs.delete("select"); qs.delete("build"); qs.delete("maker");
+    }).catch((e) => setMessage(String(e)));
     api.replays(floorName).then(setReplays).catch(() => setReplays([]));
   }, [floorName]);
 
@@ -47,16 +79,35 @@ export default function App() {
 
   const attempt = run && viewAttempt !== null ? run.attempts[viewAttempt] : null;
   const shownChanges = attempt ? attempt.changes : changes;
-  const items = useMemo(() => (data ? applyDraft(data.items, shownChanges, data.item_types) : []),
-                        [data, shownChanges]);
+  const items = useMemo(() => (data ? applyDraft(data.items, shownChanges, data.item_types) : []), [data, shownChanges]);
   const changedIds = useMemo(() => new Set(shownChanges.map((c) => c.id)), [shownChanges]);
   const shown: Evaluation | null = attempt
     ? { valid: attempt.valid, error: attempt.error, passed: attempt.passed, results: attempt.results,
         failed: attempt.failed, skipped: [], ms: attempt.ms }
     : evalResult ?? data;
-  const redCells = useMemo(() => (shown?.results ?? []).filter((r) => r.status === "fail").flatMap((r) => r.cells),
-                           [shown]);
-  const editable = !attempt;
+  const redCells = useMemo(() => (shown?.results ?? []).filter((r) => r.status === "fail").flatMap((r) => r.cells), [shown]);
+  const editable = !attempt && tab !== "build";
+  const selected = items.find((i) => i.id === selectedId) ?? null;
+  const loads: Load[] = shown?.results.find((r) => r.kind === "panel_load")?.data?.loads ?? [];
+  const paths: Record<string, PathInfo> = shown?.results.find((r) => r.kind === "exit_reach")?.data?.paths ?? {};
+
+  // Best spots: when an item type is picked for placing, or an item is selected.
+  useEffect(() => {
+    if (!data || tab === "build" || attempt) { setSuggestion(null); return; }
+    let body: Parameters<typeof api.suggest>[0] | null = null;
+    if (placing) body = { floor: floorName, changes, type: placing.type, rotation: placing.rotation,
+                          line: placeLine || null, panel: placePanel || null };
+    else if (selected) body = { floor: floorName, changes, move_id: selected.id, rotation: selected.rotation };
+    if (!body) { setSuggestion(null); setSugBusy(false); return; }
+    const seq = ++sugSeq.current;
+    setSugBusy(true);
+    const t = setTimeout(() => {
+      api.suggest(body!).then((r) => { if (seq === sugSeq.current) setSuggestion(r); })
+        .catch((e) => { if (seq === sugSeq.current) { setSuggestion(null); setMessage(String(e)); } })
+        .finally(() => { if (seq === sugSeq.current) setSugBusy(false); });
+    }, 220);
+    return () => clearTimeout(t);
+  }, [placing, placeLine, placePanel, selected?.id, selected?.rotation, changes, floorName, tab, attempt, data]);
 
   const push = useCallback((c: Change) => { setChanges((cs) => [...cs, c]); setMessage(null); }, []);
   const place = (x: number, y: number) => {
@@ -66,7 +117,11 @@ export default function App() {
     if (placePanel) c.panel = placePanel;
     push(c);
   };
-  const selected = items.find((i) => i.id === selectedId) ?? null;
+  const applyPick = (pk: Pick) => {
+    if (!data || !pk.passed) return;
+    const ch = pk.change as any;
+    push(ch.op === "add" ? { ...ch, id: nextId(data.items, changes) } : ch);
+  };
   const rotate = () => selected && push({ op: "move", id: selected.id, rotation: (selected.rotation + 90) % 360 });
   const remove = () => { if (selected) { push({ op: "remove", id: selected.id }); setSelectedId(null); } };
 
@@ -85,7 +140,7 @@ export default function App() {
   };
   const runAgent = async (fix: boolean) => {
     setBusy(fix ? "Asking the agent for the smallest fix" : "Agent is proposing, the graph is checking");
-    setTab("agent"); setViewAttempt(null);
+    setTab("agent"); setViewAttempt(null); setPlacing(null);
     try {
       const r = fix ? await api.fix(floorName, changes) : await api.agent(floorName, request);
       setRun(r);
@@ -104,120 +159,271 @@ export default function App() {
     } catch (e) { setMessage(String(e)); } finally { setBusy(null); }
   };
 
+  // Floor builder
+  const startBuild = async (edit: boolean) => {
+    setPlacing(null); setSelectedId(null); setSuggestion(null);
+    if (edit) {
+      try { setSpecState(await api.floorSpec(floorName)); setEditing(floorName); }
+      catch (e) { setMessage(String(e)); return; }
+    } else { setSpecState(blankSpec()); setEditing(null); }
+    build.setTool(edit ? null : "aisle");
+    setTab("build");
+  };
+  const saveBuild = async () => {
+    setBusy(editing ? "Rebuilding the floor graph and re-checking" : "Building the floor graph");
+    try {
+      const sp = { ...spec, items: (spec.items ?? []).filter((i) => i.x < build.cols && i.y < build.rows) };
+      const r = editing ? await api.editFloor(editing, sp) : await api.createFloor(sp);
+      await refreshStatus();
+      setTab("manual"); setEditing(null);
+      if (r.name === floorName) setData(r.floor); else setFloorName(r.name);
+      setMessage(r.floor.passed ? `Floor ${r.name} saved. Every check passes.` : `Floor ${r.name} saved. Failing: ${r.floor.failed.join(", ")}.`);
+    } catch (e) { setMessage(String(e)); } finally { setBusy(null); }
+  };
+  const deleteFloor = async () => {
+    if (!window.confirm(`Delete the custom floor ${floorName}? This removes it from floorproof.rl and packs/custom.`)) return;
+    try { await api.deleteFloor(floorName); await refreshStatus(); setFloorName("factory"); }
+    catch (e) { setMessage(String(e)); }
+  };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).tagName === "TEXTAREA" || (e.target as HTMLElement).tagName === "INPUT") return;
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT" || tab === "build") return;
       if (e.key === "Escape") { setPlacing(null); setSelectedId(null); }
       if (e.key.toLowerCase() === "r") placing ? setPlacing({ ...placing, rotation: (placing.rotation + 90) % 360 }) : rotate();
       if (e.key === "Delete" || e.key === "Backspace") remove();
       if (e.key.toLowerCase() === "z" && (e.ctrlKey || e.metaKey)) undoStep();
+      if (/^[1-9]$/.test(e.key) && suggestion) {
+        const pk = suggestion.picks.find((p) => p.rank === Number(e.key));
+        if (pk) applyPick(pk);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  if (!data) return <div className="loading">{message ?? "Loading floor from floorproof.rl ..."}</div>;
-  const loads = shown?.results.find((r) => r.kind === "panel_load")?.data?.loads ?? [];
+  // What the 3D view draws: the floor and draft, or the floor being built.
+  const buildItems: Item[] = useMemo(() => {
+    if (tab !== "build" || !data) return [];
+    const byType = Object.fromEntries(data.item_types.map((t) => [t.name, t]));
+    return (spec.items ?? []).filter((i) => byType[i.type]).map((i) => {
+      const [w, d] = size(byType[i.type], i.rotation);
+      return { ...i, w, d, h: byType[i.type].h, work: null };
+    });
+  }, [tab, spec.items, data]);
+
+  if (!data) return <div className="loading"><div className="spinner" />{message ?? "Loading floor from floorproof.rl ..."}</div>;
+
+  const results = shown?.results ?? [];
+  const nPass = results.filter((r) => r.status === "pass").length;
+  const nFail = results.filter((r) => r.status === "fail").length;
+  const nSkip = results.filter((r) => r.status === "skipped").length;
+  const walks = Object.values(paths).map((p) => p.m);
+  const maxWalk = walks.length ? Math.max(...walks) : 0;
+  const mainLoad = loads.filter((l) => l.kind === "main_breaker").map((l) => l.kw / l.limit_kw)[0];
+  const floorRow = status?.floors.find((f) => f.name === floorName);
+  const building = tab === "build";
 
   return (
     <div className="app">
       <header>
-        <h1>FloorProof</h1>
+        <div className="brand"><span className="logo">◆</span><h1>FLOOR<b>PROOF</b></h1></div>
         <span className="tag">The AI suggests, the graph proves.</span>
-        <select value={floorName} onChange={(e) => setFloorName(e.target.value)}>
-          {status?.floors.map((f) => <option key={f.name} value={f.name}>{f.label} · {f.pack}</option>)}
+        <select value={floorName} onChange={(e) => setFloorName(e.target.value)} disabled={building}>
+          {status?.floors.map((f: FloorRow) => <option key={f.name} value={f.name}>{f.custom ? "★ " : ""}{f.label} · {f.pack}</option>)}
         </select>
+        {!building && <button className="neon" onClick={() => startBuild(false)}>+ New floor</button>}
+        {!building && floorRow?.custom && <><button onClick={() => startBuild(true)}>Edit floor</button>
+          <button className="danger" onClick={deleteFloor}>Delete</button></>}
         <span className="store">Relate store: {status?.store} ({status?.storage})</span>
         <span className={`llm ${status?.llm.live ? "live" : "replay"}`}>
-          model: {status?.llm.live ? `${status.llm.model} (live)` : "replay only (no API key)"}
+          {status?.llm.live ? `● ${status.llm.model}` : "○ replay only (no API key)"}
         </span>
       </header>
 
       <aside className="left">
-        <div className="tabs">
-          <button className={tab === "manual" ? "on" : ""} onClick={() => setTab("manual")}>Manual edit</button>
-          <button className={tab === "agent" ? "on" : ""} onClick={() => setTab("agent")}>Ask the agent</button>
-        </div>
-        {tab === "manual" ? (
-          <>
-            <h3>Add an item</h3>
-            <p className="hint">Pick, then click the floor. R rotates. Drag items to move. Delete removes.</p>
-            <div className="palette">
-              {data.item_types.map((t) => (
-                <button key={t.name} className={placing?.type === t.name ? "on" : ""}
-                        onClick={() => setPlacing(placing?.type === t.name ? null : { type: t.name, rotation: 0 })}>
-                  <i style={{ background: t.color }} />{t.label}
-                  <small>{t.w * data.floor.cell_m}×{t.d * data.floor.cell_m} m{t.kw ? ` · ${t.kw} kW` : ""}</small>
-                </button>
-              ))}
-            </div>
-            {placing && (
-              <div className="placeopts">
-                <label>Rotation <b>{placing.rotation}°</b></label>
-                {data.lines.length > 0 && (
-                  <label>Line <select value={placeLine} onChange={(e) => setPlaceLine(e.target.value)}>
-                    <option value="">none</option>{data.lines.map((l) => <option key={l.name}>{l.name}</option>)}
-                  </select></label>)}
-                {data.panels.length > 0 && (
-                  <label>Plug into <select value={placePanel} onChange={(e) => setPlacePanel(e.target.value)}>
-                    <option value="">nearest drop box</option>
-                    {data.panels.filter((p) => p.kind === "drop_box").map((p) => <option key={p.name}>{p.name}</option>)}
-                  </select></label>)}
-              </div>
-            )}
-            {selected && (
-              <div className="selected">
-                <h3>{selected.id}</h3>
-                <p>{data.item_types.find((t) => t.name === selected.type)?.label} at ({selected.x}, {selected.y}),
-                  {" "}{selected.rotation}°{selected.line ? `, line ${selected.line}` : ""}{selected.panel ? `, ${selected.panel}` : ""}</p>
-                <button onClick={rotate}>Rotate</button> <button onClick={remove}>Remove</button>
-              </div>
-            )}
-            <h3>Draft ({changes.length} change{changes.length === 1 ? "" : "s"}, not saved)</h3>
-            <ol className="changes">
-              {changes.map((c, i) => <li key={i}>{c.op} {c.id}{c.op === "add" ? ` ${c.type} @${c.x},${c.y}` : ""}
-                {c.op === "move" ? ` → ${c.x ?? ""}${c.y !== undefined ? "," + c.y : ""}${c.rotation !== undefined ? ` ${c.rotation}°` : ""}` : ""}</li>)}
-            </ol>
-            <div className="actions">
-              <button className="primary" disabled={!changes.length || !evalResult?.passed || !!busy} onClick={acceptDraft}
-                      title={evalResult && !evalResult.passed ? "Only a layout that passes every check can be saved" : ""}>Accept</button>
-              <button onClick={undoStep} disabled={!!busy}>{changes.length ? "Undo step" : "Undo last accept"}</button>
-              <button onClick={() => setChanges([])} disabled={!changes.length}>Discard</button>
-              <button onClick={() => runAgent(true)} disabled={!changes.length || !evalResult || evalResult.passed || !!busy}>Fix it</button>
-            </div>
-          </>
+        {building ? (
+          <BuilderPanel spec={spec} setSpec={setSpec} build={build} editing={editing} busy={!!busy} current={data}
+                        onSave={saveBuild} onCancel={() => { setTab("manual"); setEditing(null); }} />
         ) : (
           <>
-            <h3>Change request</h3>
-            <textarea value={request} onChange={(e) => setRequest(e.target.value)} rows={3} />
-            {replays.length > 0 && (
-              <p className="hint">Recorded runs (work with no API key):{" "}
-                {replays.map((r) => <a key={r.request} onClick={() => setRequest(r.request)}>{r.request}</a>)}</p>)}
-            <button className="primary" disabled={!!busy || !request.trim()} onClick={() => runAgent(false)}>Propose layouts</button>
-            {run && <Attempts run={run} view={viewAttempt} onView={setViewAttempt} onAccept={acceptAttempt} />}
+            <div className="tabs">
+              <button className={tab === "manual" ? "on" : ""} onClick={() => setTab("manual")}>Manual edit</button>
+              <button className={tab === "agent" ? "on" : ""} onClick={() => setTab("agent")}>Ask the agent</button>
+            </div>
+            {tab === "manual" ? (
+              <>
+                <div className="section-head">
+                  <h3>Items</h3>
+                  <button className="neon small" onClick={() => setMaker(!maker)}>{maker ? "Close" : "+ Describe a new item"}</button>
+                </div>
+                {maker && <ItemMaker floor={floorName} cell={data.floor.cell_m} live={!!status?.llm.live} model={status?.llm.model ?? ""}
+                                     onClose={() => setMaker(false)}
+                                     onSaved={(fd, t) => { setData(fd); setMaker(false); setPlacing({ type: t.name, rotation: 0 });
+                                                           setMessage(`Saved ${t.label}. Pick a glowing spot or click the floor to place it.`); }} />}
+                <p className="hint">Pick one, then click the floor or a numbered best spot. R rotates. Drag to move. Delete removes.</p>
+                <div className="palette">
+                  {data.item_types.map((t) => (
+                    <button key={t.name} className={placing?.type === t.name ? "on" : ""} style={{ ["--c" as any]: t.color }}
+                            onClick={() => { setSelectedId(null); setPlacing(placing?.type === t.name ? null : { type: t.name, rotation: 0 }); }}>
+                      <i>{GLYPH[shapeOf(t)] ?? "▢"}</i>
+                      <span>{t.label}{t.custom && <em className="badge">custom</em>}</span>
+                      <small>{t.w * data.floor.cell_m}×{t.d * data.floor.cell_m} m{t.kw ? ` · ${t.kw} kW` : ""}{t.heat ? " · hot" : ""}</small>
+                    </button>
+                  ))}
+                </div>
+                {placing && (
+                  <div className="placeopts card">
+                    <label>Rotation <b>{placing.rotation}°</b> <small>(R)</small></label>
+                    {data.lines.length > 0 && (
+                      <label>Line <select value={placeLine} onChange={(e) => setPlaceLine(e.target.value)}>
+                        <option value="">none</option>{data.lines.map((l) => <option key={l.name}>{l.name}</option>)}
+                      </select></label>)}
+                    {data.panels.length > 0 && (
+                      <label>Plug into <select value={placePanel} onChange={(e) => setPlacePanel(e.target.value)}>
+                        <option value="">best drop box</option>
+                        {data.panels.filter((p) => p.kind === "drop_box").map((p) => <option key={p.name}>{p.name}</option>)}
+                      </select></label>)}
+                  </div>
+                )}
+                {selected && !placing && (
+                  <div className="selected card">
+                    <h3>{selected.id} <small>{data.item_types.find((t) => t.name === selected.type)?.label}</small></h3>
+                    <p>At ({selected.x}, {selected.y}), {selected.rotation}°{selected.line ? `, line ${selected.line}` : ""}{selected.panel ? `, on ${selected.panel}` : ""}.
+                      {paths[selected.id] ? ` Walk to exit ${paths[selected.id].exit}: ${paths[selected.id].m.toFixed(1)} m.` : ""}</p>
+                    <button onClick={rotate}>Rotate</button> <button onClick={remove}>Remove</button>
+                  </div>
+                )}
+                {(placing || selected) && <Picks s={suggestion} busy={sugBusy} moving={!placing} onPick={applyPick} />}
+                <h3>Draft <small>{changes.length} change{changes.length === 1 ? "" : "s"}, not saved</small></h3>
+                <ol className="changes">
+                  {changes.map((c, i) => <li key={i}>{c.op} {c.id}{c.op === "add" ? ` ${c.type} @${c.x},${c.y}` : ""}
+                    {c.op === "move" ? ` → ${c.x ?? ""}${c.y !== undefined ? "," + c.y : ""}${c.rotation !== undefined ? ` ${c.rotation}°` : ""}` : ""}</li>)}
+                </ol>
+                <div className="actions">
+                  <button className="primary" disabled={!changes.length || !evalResult?.passed || !!busy} onClick={acceptDraft}
+                          title={evalResult && !evalResult.passed ? "Only a layout that passes every check can be saved" : ""}>Accept</button>
+                  <button onClick={undoStep} disabled={!!busy}>{changes.length ? "Undo step" : "Undo last accept"}</button>
+                  <button onClick={() => setChanges([])} disabled={!changes.length}>Discard</button>
+                  <button onClick={() => runAgent(true)} disabled={!changes.length || !evalResult || evalResult.passed || !!busy}>Fix it</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3>Change request</h3>
+                <textarea value={request} onChange={(e) => setRequest(e.target.value)} rows={3} />
+                {replays.length > 0 && (
+                  <p className="hint">Recorded runs (work with no API key):{" "}
+                    {replays.map((r) => <a key={r.request} onClick={() => setRequest(r.request)}>{r.request}</a>)}</p>)}
+                <button className="primary" disabled={!!busy || !request.trim()} onClick={() => runAgent(false)}>Propose layouts</button>
+                {run && <Attempts run={run} view={viewAttempt} onView={setViewAttempt} onAccept={acceptAttempt} />}
+              </>
+            )}
           </>
         )}
       </aside>
 
       <main>
-        <Floor3D data={data} items={items} changedIds={changedIds} selectedId={selectedId} placing={editable ? placing : null}
-                 redCells={redCells} editable={editable} onSelect={setSelectedId} onPlace={place}
-                 onMove={(id, x, y) => push({ op: "move", id, x, y })} onHover={setHover} />
+        <Floor3D floor={building ? { cols: build.cols, rows: build.rows, cell_m: CELL } : data.floor}
+                 itemTypes={data.item_types}
+                 zones={building ? spec.zones : data.zones} exits={building ? spec.exits : data.exits}
+                 panels={building ? spec.panels : data.panels} items={building ? buildItems : items}
+                 changedIds={building ? new Set() : changedIds} selectedId={building ? null : selectedId}
+                 placing={editable ? placing : null} redCells={building ? [] : redCells} editable={editable}
+                 loads={building ? [] : loads} paths={building ? {} : paths}
+                 showPaths={showPaths} showPower={showPower} showHeat={showHeat} suggestion={building ? null : suggestion}
+                 build={building ? build.hooks : undefined}
+                 onSelect={(id) => { setSelectedId(id); if (id) setPlacing(null); }} onPlace={place}
+                 onMove={(id, x, y) => push({ op: "move", id, x, y })} onHover={setHover} onPick={applyPick} />
+        {!building && (
+          <div className="hud">
+            <div className={`proof ${shown?.passed ? "ok" : "bad"}`}>
+              <Ring pass={nPass} fail={nFail} skip={nSkip} />
+              <div><b>{shown?.passed ? "PROVEN" : `${nFail} RULE${nFail === 1 ? "" : "S"} BROKEN`}</b>
+                <small>{nPass} pass · {nFail} fail · {nSkip} not checked · {shown?.ms?.toFixed(0)} ms</small></div>
+            </div>
+            <div className="stat"><small>items</small><b>{items.length}</b></div>
+            <div className="stat"><small>longest walk</small><b>{maxWalk.toFixed(1)} m</b></div>
+            {mainLoad !== undefined && <div className={`stat ${mainLoad > 1 ? "bad" : mainLoad > 0.85 ? "warn" : ""}`}><small>main load</small><b>{Math.round(mainLoad * 100)}%</b></div>}
+          </div>
+        )}
+        {!building && (
+          <div className="toggles">
+            <button className={showHeat ? "on" : ""} onClick={() => setShowHeat(!showHeat)}>▦ Best-spot map</button>
+            <button className={showPaths ? "on" : ""} onClick={() => setShowPaths(!showPaths)}>⇢ Exit paths</button>
+            <button className={showPower ? "on" : ""} onClick={() => setShowPower(!showPower)}>⚡ Power links</button>
+          </div>
+        )}
+        {building && <div className="hud build-hud"><b>BUILD MODE</b><small>{build.cols} × {build.rows} cells · {spec.width_m} × {spec.depth_m} m</small></div>}
         {hover && <div className="hover">{hover}</div>}
         {attempt && <div className="banner">Viewing attempt {attempt.round}.{attempt.index} ({attempt.passed ? "proven" : "rejected"})
           <button onClick={() => setViewAttempt(null)}>Back to floor</button></div>}
-        {busy && <div className="busy">{busy} ...</div>}
+        {busy && <div className="busy"><div className="spinner" />{busy} ...</div>}
         {message && <div className="message" onClick={() => setMessage(null)}>{message}</div>}
-        <div className="note">{data.floor.data_note} Planning aid only, not a certified safety tool.</div>
+        <div className="note">{building ? "Custom floor drawn by you." : data.floor.data_note} Planning aid only, not a certified safety tool.</div>
       </main>
 
       <aside className="right">
-        <h3>Checks {shown?.passed ? <span className="ok">all pass</span> : <span className="bad">failed</span>}
-          <small> {shown?.ms?.toFixed(0)} ms</small></h3>
-        {shown && !shown.valid && <p className="bad">Invalid layout: {shown.error}</p>}
-        {shown?.results.map((r) => <CheckRow key={r.rule_id} r={r} />)}
-        {loads.length > 0 && <LoadBars loads={loads} />}
+        {building ? (
+          <>
+            <h3>Rules on this floor</h3>
+            <p className="hint">Every custom floor gets these checks. They run on the graph as soon as you save.</p>
+            {["No overlap", "Exit reach (OSHA 1910.37)", "Exit distance (IBC 1017.2 or your number)", "Aisle width 0.711 m (OSHA 1910.36)",
+              ...(spec.zones.some((z) => z.kind === "forklift_aisle") ? ["Forklift aisle width (TBD or your number)"] : []),
+              ...(spec.panels.length ? ["Panel load 80% at every level (NEC 210.20(A))"] : []),
+              ...(spec.lines.length ? ["Line flow"] : [])].map((r) => <div key={r} className="check skipped"><b>{r}</b></div>)}
+          </>
+        ) : (
+          <>
+            <h3>Checks {shown?.passed ? <span className="ok">all pass</span> : <span className="bad">failed</span>}
+              <small> {shown?.ms?.toFixed(0)} ms</small></h3>
+            {shown && shown.valid === false && <p className="bad">Invalid layout: {shown.error}</p>}
+            {shown?.results.map((r) => <CheckRow key={r.rule_id} r={r} />)}
+            {loads.length > 0 && <LoadBars loads={loads} />}
+          </>
+        )}
       </aside>
+    </div>
+  );
+}
+
+function Ring({ pass, fail, skip }: { pass: number; fail: number; skip: number }) {
+  const total = Math.max(pass + fail + skip, 1), r = 18, C = 2 * Math.PI * r;
+  const seg = (n: number) => (n / total) * C;
+  return (
+    <svg width="46" height="46" viewBox="0 0 46 46" className="ring">
+      <circle cx="23" cy="23" r={r} className="track" />
+      <circle cx="23" cy="23" r={r} className="pass" strokeDasharray={`${seg(pass)} ${C}`} />
+      <circle cx="23" cy="23" r={r} className="fail" strokeDasharray={`${seg(fail)} ${C}`} strokeDashoffset={-seg(pass)} />
+      <circle cx="23" cy="23" r={r} className="skip" strokeDasharray={`${seg(skip)} ${C}`} strokeDashoffset={-seg(pass + fail)} />
+      <text x="23" y="27" textAnchor="middle">{pass}/{total}</text>
+    </svg>
+  );
+}
+
+function Picks({ s, busy, moving, onPick }: { s: Suggestion | null; busy: boolean; moving: boolean; onPick: (p: Pick) => void }) {
+  const reasons: Record<string, string> = { blocked_cells: "taken", aisle: "in an aisle", no_exit: "no free work spot",
+                                            too_far: "too far from exits", power: "no power headroom", line: "behind the line" };
+  return (
+    <div className="picks card">
+      <div className="card-head"><b>{moving ? "Better spots" : "Best spots"}</b>
+        <small>{busy ? "scanning and proving ..." : s ? `${s.counts.fits} fit · ${s.ms.toFixed(0)} ms` : ""}</small></div>
+      {busy && !s && <div className="scanbar" />}
+      {s && s.picks.length === 0 && (
+        <p className="bad">No spot fits. Blocked: {Object.entries(s.counts).filter(([k, v]) => k !== "fits" && v > 0)
+          .map(([k, v]) => `${v} ${reasons[k] ?? k}`).join(", ")}.</p>)}
+      {s?.picks.map((p) => (
+        <div key={p.rank} className={`pick ${p.passed ? "pass" : "fail"}`} onClick={() => onPick(p)}>
+          <span className="rank">{p.rank}</span>
+          <div>
+            <b>({p.x}, {p.y}) {p.passed ? "proven ✓" : `fails ${p.failed.join(", ")}`}</b>
+            <small>{p.why.join(" · ")}</small>
+          </div>
+          <span className="score" style={{ ["--s" as any]: p.score }}>{Math.round(p.score * 100)}</span>
+        </div>
+      ))}
+      {s && s.picks.length > 0 && <p className="hint">The map is a quick scan. Each numbered pick was proven by the full graph checks in a rolled-back draft. Press its number to use it.</p>}
     </div>
   );
 }
@@ -233,10 +439,10 @@ function CheckRow({ r }: { r: CheckResult }) {
   );
 }
 
-function LoadBars({ loads }: { loads: { name: string; kind: string; kw: number; limit_kw: number; capacity_kw: number }[] }) {
+function LoadBars({ loads }: { loads: Load[] }) {
   return (
     <div className="loads">
-      <h3>Power load (limit = 80% of rating)</h3>
+      <h3>Power load <small>(limit = 80% of rating)</small></h3>
       {loads.map((l) => {
         const pct = Math.min(130, (l.kw / l.limit_kw) * 100);
         return (

@@ -1,8 +1,9 @@
-import type { AgentRun, Change, Evaluation, FloorData } from "./types";
+import type { AgentRun, Change, Evaluation, FloorData, FloorSpec, ItemDraft, ItemType, Suggestion } from "./types";
 
-async function call<T>(path: string, body?: unknown): Promise<T> {
-  const r = await fetch(path, body === undefined ? undefined : {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+async function call<T>(path: string, body?: unknown, method?: string): Promise<T> {
+  const r = await fetch(path, body === undefined && !method ? undefined : {
+    method: method ?? "POST", headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
@@ -12,8 +13,10 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
   return data as T;
 }
 
+export type FloorRow = { name: string; label: string; pack: string; custom: boolean };
+
 export const api = {
-  status: () => call<{ floors: { name: string; label: string; pack: string }[]; store: string; storage: string;
+  status: () => call<{ floors: FloorRow[]; store: string; storage: string;
                        llm: { mode: string; live: boolean; model: string } }>("/api/status"),
   floor: (f: string) => call<FloorData>(`/api/floor/${f}`),
   evaluate: (floor: string, changes: Change[]) => call<Evaluation>("/api/evaluate", { floor, changes }),
@@ -23,4 +26,14 @@ export const api = {
   agent: (floor: string, request: string) => call<AgentRun>("/api/agent", { floor, request }),
   fix: (floor: string, changes: Change[]) => call<AgentRun>("/api/fix", { floor, changes }),
   replays: (floor: string) => call<{ request: string; recorded_at: string; model: string }[]>(`/api/replays/${floor}`),
+  suggest: (body: { floor: string; changes: Change[]; type?: string; rotation?: number; line?: string | null;
+                    panel?: string | null; move_id?: string | null }) => call<Suggestion>("/api/suggest", body),
+  describe: (text: string) => call<ItemDraft>("/api/item-types/describe", { text }),
+  addItemType: (floor: string, t: ItemDraft) =>
+    call<{ item_type: ItemType; floor: FloorData }>("/api/item-types", { floor, ...t }),
+  createFloor: (spec: FloorSpec) => call<{ name: string; floor: FloorData }>("/api/floors", { spec }),
+  editFloor: (name: string, spec: FloorSpec) =>
+    call<{ name: string; floor: FloorData; kept_items: number; sent_items: number }>(`/api/floors/${name}`, { spec }, "PUT"),
+  floorSpec: (name: string) => call<FloorSpec>(`/api/floors/${name}/spec`),
+  deleteFloor: (name: string) => call<{ deleted: string }>(`/api/floors/${name}`, undefined, "DELETE"),
 };
