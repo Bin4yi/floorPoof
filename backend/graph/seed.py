@@ -38,18 +38,21 @@ def seed_pack(g: Graph, pack: dict) -> None:
          "rows": rows, "s": fl["sprinklered"], "note": fl.get("data_note", ""), "pack": pk["name"], "plabel": pk["label"]})
 
     # Grid cells and the static NEIGHBOR structure
-    cells = [{"x": x, "y": y} for x in range(cols) for y in range(rows)]
-    g.q("UNWIND $cells AS c CREATE (:Cell {floor:$f, x:c.x, y:c.y, walkable:true})", {"f": f, "cells": cells})
-    pairs = [{"ax": x, "ay": y, "bx": x + dx, "by": y + dy}
+    def key(x: int, y: int) -> str:
+        return f"{f}:{x}:{y}"
+
+    cells = [{"x": x, "y": y, "k": key(x, y)} for x in range(cols) for y in range(rows)]
+    g.q("UNWIND $cells AS c CREATE (:Cell {floor:$f, x:c.x, y:c.y, key:c.k, walkable:true})", {"f": f, "cells": cells})
+    pairs = [{"a": key(x, y), "b": key(x + dx, y + dy)}
              for x in range(cols) for y in range(rows) for dx, dy in ((1, 0), (0, 1))
              if x + dx < cols and y + dy < rows]
-    g.q("""UNWIND $pairs AS p MATCH (a:Cell {floor:$f, x:p.ax, y:p.ay}), (b:Cell {floor:$f, x:p.bx, y:p.by})
-           CREATE (a)-[:NEIGHBOR]->(b)""", {"f": f, "pairs": pairs})
+    g.q("""UNWIND $pairs AS p MATCH (a:Cell {key:p.a}) MATCH (b:Cell {key:p.b})
+           CREATE (a)-[:NEIGHBOR]->(b)""", {"pairs": pairs})
 
     for z in pack.get("zones", []):
-        zc = [[x, y] for x in range(z["x0"], z["x1"] + 1) for y in range(z["y0"], z["y1"] + 1)]
+        zc = [key(x, y) for x in range(z["x0"], z["x1"] + 1) for y in range(z["y0"], z["y1"] + 1)]
         g.q("""CREATE (zn:Zone {floor:$f, name:$name, kind:$kind, axis:$axis, x0:$x0, y0:$y0, x1:$x1, y1:$y1})
-               WITH zn UNWIND $cells AS k MATCH (c:Cell {floor:$f, x:k[0], y:k[1]}) CREATE (c)-[:IN_ZONE]->(zn)""",
+               WITH zn UNWIND $cells AS k MATCH (c:Cell {key:k}) CREATE (c)-[:IN_ZONE]->(zn)""",
             {"f": f, "name": z["name"], "kind": z["kind"], "axis": z.get("axis"), "x0": z["x0"], "y0": z["y0"],
              "x1": z["x1"], "y1": z["y1"], "cells": zc})
 
