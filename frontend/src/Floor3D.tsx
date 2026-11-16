@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Exit, Item, ItemType, Panel, Pick, Suggestion, Zone } from "./types";
 import { size } from "./draft";
-import { Cable, Clock, GridFloor, Label, Ribbon, TIME, heatColor, outlineGeometry, usePulse } from "./fx";
+import { Cable, Clock, GridFloor, Label, Ribbon, TIME, crowdColor, heatColor, outlineGeometry, usePulse } from "./fx";
 import { ItemModel } from "./models";
 
 export interface Load { name: string; kind: string; kw: number; limit_kw: number; capacity_kw: number }
@@ -30,6 +30,9 @@ interface Props {
   paths: Record<string, PathInfo>;
   showPaths: boolean; showPower: boolean; showHeat: boolean;
   suggestion: Suggestion | null;
+  routes?: { line: Route[]; flow: Route[] } | null;
+  crowd?: [number, number, number][] | null;
+  showLine?: boolean; showFlow?: boolean; showCrowd?: boolean;
   build?: BuildHooks;
   onSelect: (id: string | null) => void;
   onPlace: (x: number, y: number) => void;
@@ -38,12 +41,38 @@ interface Props {
   onPick: (p: Pick) => void;
 }
 
+export interface Route { a: string; b: string; m: number | null; cells: [number, number][]; line?: string; flow?: string }
+
+// Light theme colours. Status colours are kept for pass/fail only.
+export const COL = {
+  ok: "#12b76a", bad: "#e34948", warn: "#eda100", blue: "#2a78d6", select: "#1d4ed8",
+  line: "#eb6834", flow: "#6250d6", exit: "#2a78d6", power: "#0e9fb8", feed: "#6250d6",
+};
 const ZONE_STYLE: Record<string, { color: string; opacity: number }> = {
-  aisle: { color: "#ffc53d", opacity: 0.16 }, forklift_aisle: { color: "#ff8a3d", opacity: 0.16 },
+  aisle: { color: "#eda100", opacity: 0.16 }, forklift_aisle: { color: "#eb6834", opacity: 0.14 },
 };
 const PANEL_H: Record<string, number> = { main_breaker: 2.2, sub_panel: 1.7, drop_box: 1.1 };
 
 let controls: OrbitControls | null = null;
+
+/** Place the camera so the whole floor fits the view, for this panel's shape. Runs once per floor size. */
+function FitCamera({ W, D }: { W: number; D: number }) {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    const aspect = size.width / Math.max(size.height, 1);
+    const v = (cam.fov * Math.PI) / 180;
+    const h = 2 * Math.atan(Math.tan(v / 2) * aspect);
+    const dist = Math.max((W * 0.56) / Math.tan(h / 2), (D * 0.9) / Math.tan(v / 2)) + D * 0.35;
+    const dir = new THREE.Vector3(0, 0.78, 0.63).normalize();
+    cam.position.copy(dir.multiplyScalar(dist));
+    cam.lookAt(0, 0, 0);
+    controls?.target.set(0, 0, 0);
+    controls?.update();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [W, D]);
+  return null;
+}
 
 function Controls({ target }: { target: [number, number, number] }) {
   const { camera, gl } = useThree();
@@ -132,7 +161,7 @@ function Beacon({ p, c, toWorld, onPick, onHover }: {
 }) {
   const [x, z] = toWorld(p.x + p.w / 2, p.y + p.d / 2);
   const W = p.w * c, D = p.d * c;
-  const col = p.passed ? "#3dff9a" : "#ff3b5c";
+  const col = p.passed ? COL.ok : COL.bad;
   const beam = useRef<THREE.Mesh>(null);
   usePulse(beam, "scale", 3, 0.85, 1.1);
   const edges = useMemo(() => outlineGeometry(W, 0.02, D), [W, D]);
@@ -147,7 +176,7 @@ function Beacon({ p, c, toWorld, onPick, onHover }: {
       <lineSegments geometry={edges} position={[0, 0.06, 0]}><lineBasicMaterial color={col} toneMapped={false} /></lineSegments>
       <mesh ref={beam} position={[0, 2.2, 0]} raycast={() => null}>
         <cylinderGeometry args={[0.06, 0.25, 4.4, 12, 1, true]} />
-        <meshBasicMaterial color={col} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={col} transparent opacity={0.2} depthWrite={false} side={THREE.DoubleSide} />
       </mesh>
       <Label text={`${p.rank}${p.passed ? " ✓" : " ✗"}`} position={[0, 4.7, 0]} color={col} size={0.8} />
     </group>
@@ -164,13 +193,13 @@ function ExitGate({ e, toWorld, c, cols, rows }: { e: Exit; toWorld: (x: number,
     <group position={[x, 0, z]} rotation={[0, alongZ ? Math.PI / 2 : 0, 0]}>
       {[-1, 1].map((s) => (
         <mesh key={s} position={[s * span / 2, 1.1, 0]}><boxGeometry args={[0.08, 2.2, 0.08]} />
-          <meshBasicMaterial color="#3dff9a" toneMapped={false} /></mesh>))}
-      <mesh position={[0, 2.2, 0]}><boxGeometry args={[span + 0.08, 0.08, 0.08]} /><meshBasicMaterial color="#3dff9a" toneMapped={false} /></mesh>
+          <meshBasicMaterial color={COL.ok} toneMapped={false} /></mesh>))}
+      <mesh position={[0, 2.2, 0]}><boxGeometry args={[span + 0.08, 0.08, 0.08]} /><meshBasicMaterial color={COL.ok} toneMapped={false} /></mesh>
       <mesh position={[0, 1.1, 0]} raycast={() => null}><planeGeometry args={[span, 2.2]} />
-        <meshBasicMaterial ref={beam} color="#3dff9a" transparent opacity={0.25} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} /></mesh>
+        <meshBasicMaterial ref={beam} color={COL.ok} transparent opacity={0.25} side={THREE.DoubleSide} depthWrite={false} /></mesh>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.03, 0]} raycast={() => null}><ringGeometry args={[c * 0.8, c * 1.1, 32]} />
-        <meshBasicMaterial color="#3dff9a" transparent opacity={0.7} toneMapped={false} /></mesh>
-      <Label text={`EXIT ${e.name}`} position={[0, 2.75, 0]} color="#3dff9a" size={0.5} />
+        <meshBasicMaterial color={COL.ok} transparent opacity={0.8} toneMapped={false} /></mesh>
+      <Label text={`EXIT ${e.name}`} position={[0, 2.75, 0]} color={COL.ok} size={0.5} />
     </group>
   );
 }
@@ -181,7 +210,7 @@ function PanelTower({ p, load, toWorld, c, onHover }: {
   const [x, z] = toWorld(p.x + 0.5, p.y + 0.5);
   const h = PANEL_H[p.kind] ?? 1.2;
   const ratio = load ? load.kw / Math.max(load.limit_kw, 0.01) : 0;
-  const col = ratio > 1 ? "#ff3b5c" : ratio > 0.85 ? "#ffc53d" : "#3dd6ff";
+  const col = ratio > 1 ? COL.bad : ratio > 0.85 ? COL.warn : COL.power;
   const ring = useRef<THREE.Mesh>(null);
   usePulse(ring, "scale", ratio > 1 ? 6 : 1.5, 0.9, 1.15);
   const r = c * (p.kind === "main_breaker" ? 0.55 : p.kind === "sub_panel" ? 0.45 : 0.35);
@@ -190,7 +219,7 @@ function PanelTower({ p, load, toWorld, c, onHover }: {
            onPointerOver={(e) => { e.stopPropagation(); onHover(`${p.name} · ${p.kind.replace("_", " ")} · ${load ? `${load.kw} / ${load.limit_kw} kW (80% of ${p.capacity_kw} kW)` : `${p.capacity_kw} kW`}${p.fed_by ? ` · fed by ${p.fed_by}` : ""}`); }}
            onPointerOut={() => onHover(null)}>
       <mesh position={[0, h / 2, 0]} castShadow><cylinderGeometry args={[r, r * 1.1, h, 6]} />
-        <meshStandardMaterial color="#121c2b" metalness={0.8} roughness={0.3} /></mesh>
+        <meshStandardMaterial color="#e9eef4" metalness={0.2} roughness={0.4} transparent opacity={0.75} /></mesh>
       {/* load fill: a glowing core that rises with the load */}
       <mesh position={[0, (h * Math.min(ratio, 1)) / 2 + 0.02, 0]} raycast={() => null}>
         <cylinderGeometry args={[r * 0.55, r * 0.55, Math.max(h * Math.min(ratio, 1), 0.02), 6]} />
@@ -210,11 +239,11 @@ function SelectRing({ W, D }: { W: number; D: number }) {
   return (
     <group ref={ref}>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.04, 0]} raycast={() => null}>
-        <ringGeometry args={[r, r + 0.08, 48]} /><meshBasicMaterial color="#e9fbff" transparent opacity={0.9} toneMapped={false} />
+        <ringGeometry args={[r, r + 0.1, 48]} /><meshBasicMaterial color={COL.select} transparent opacity={0.9} toneMapped={false} />
       </mesh>
       <mesh position={[0, 3, 0]} raycast={() => null}>
         <cylinderGeometry args={[r * 0.98, r, 6, 32, 1, true]} />
-        <meshBasicMaterial color="#5ad1ff" transparent opacity={0.06} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial color={COL.select} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -229,7 +258,7 @@ function ItemView({ it, t, c, toWorld, pos, selected, changed, failing, editable
   const W = it.w * c, D = it.d * c;
   const [W0, D0] = it.rotation === 90 || it.rotation === 270 ? [D, W] : [W, D];
   const edges = useMemo(() => outlineGeometry(W * 0.99, it.h, D * 0.99), [W, D, it.h]);
-  const edgeCol = failing ? "#ff3b5c" : selected ? "#ffffff" : changed ? "#5ad1ff" : (t?.color ?? "#5ad1ff");
+  const edgeCol = failing ? COL.bad : selected ? COL.select : changed ? COL.blue : (t?.color ?? COL.blue);
   return (
     <group position={[x, 0, z]}
            onPointerDown={(e) => { if (!editable) return; e.stopPropagation(); onDown(e); }}
@@ -241,13 +270,13 @@ function ItemView({ it, t, c, toWorld, pos, selected, changed, failing, editable
         <ItemModel t={t} W={W0} D={D0} H={it.h} />
       </group>
       <lineSegments geometry={edges} position={[0, it.h / 2, 0]} raycast={() => null}>
-        <lineBasicMaterial color={edgeCol} transparent opacity={selected || failing ? 1 : changed ? 0.9 : 0.35} toneMapped={false} />
+        <lineBasicMaterial color={edgeCol} transparent opacity={selected || failing ? 1 : changed ? 0.95 : 0.45} toneMapped={false} />
       </lineSegments>
       {/* invisible hit box, so the whole footprint is easy to grab */}
       <mesh position={[0, it.h / 2, 0]} visible={false}><boxGeometry args={[W, it.h, D]} /></mesh>
       {selected && <SelectRing W={W} D={D} />}
-      {(selected || changed) && <Label text={it.id} position={[0, it.h + 0.5, 0]} color={changed ? "#5ad1ff" : "#ffffff"} size={0.42} />}
-      {failing && <Label text="⚠" position={[0, it.h + 0.5, 0]} color="#ff3b5c" size={0.6} bg={false} />}
+      {(selected || changed) && <Label text={it.id} position={[0, it.h + 0.5, 0]} color={changed ? COL.blue : COL.select} size={0.42} />}
+      {failing && <Label text="⚠" position={[0, it.h + 0.5, 0]} color={COL.bad} size={0.7} bg={false} />}
     </group>
   );
 }
@@ -325,40 +354,39 @@ export default function Floor3D(p: Props) {
   const bestPick = p.suggestion?.picks.find((x) => x.passed);
 
   return (
-    <Canvas camera={{ position: [0, Math.max(W, D * 1.4) * 0.62 + 4, D * 0.5 + Math.max(W, D * 1.4) * 0.72], fov: 42, near: 0.1, far: 900 }} shadows
+    <Canvas camera={{ position: [0, Math.max(W, D * 1.4) * 0.5 + 3, D * 0.5 + Math.max(W, D * 1.4) * 0.55], fov: 42, near: 0.1, far: 900 }} shadows
             dpr={[1, 2]} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
             onPointerMissed={() => p.onSelect(null)}>
-      <color attach="background" args={["#03070f"]} />
-      <fog attach="fog" args={["#03070f", Math.max(W, D) * 0.9, Math.max(W, D) * 2.4]} />
+      <color attach="background" args={["#eef3f9"]} />
+      <fog attach="fog" args={["#eef3f9", Math.max(W, D) * 1.1, Math.max(W, D) * 2.8]} />
       <Clock />
-      <ambientLight intensity={0.35} />
-      <hemisphereLight args={["#6fd6ff", "#1a0f3a", 0.55]} />
-      <directionalLight position={[W * 0.3, 40, D * 0.5]} intensity={1.1} castShadow
+      <ambientLight intensity={0.75} />
+      <hemisphereLight args={["#ffffff", "#c9d6e6", 0.7]} />
+      <directionalLight position={[W * 0.3, 40, D * 0.5]} intensity={1.5} castShadow
                         shadow-mapSize={[2048, 2048]} shadow-camera-left={-W / 1.6} shadow-camera-right={W / 1.6}
                         shadow-camera-top={D / 1.2} shadow-camera-bottom={-D / 1.2} />
-      <pointLight position={[-W / 3, 6, 0]} intensity={30} distance={W} color="#7c4dff" />
-      <pointLight position={[W / 3, 6, 0]} intensity={30} distance={W} color="#00d8ff" />
       <Controls target={target} />
+      <FitCamera W={W} D={D} />
 
       <GridFloor W={W} D={D} cols={cols} rows={rows} receiveShadow onPointerMove={onFloorMove} onPointerUp={onFloorUp}
                  onPointerDown={onFloorDown} onClick={onFloorClick} onPointerLeave={() => setHoverCell(null)} />
       {/* shadow catcher over the shader floor */}
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.003, 0]} receiveShadow raycast={() => null}>
-        <planeGeometry args={[W, D]} /><shadowMaterial opacity={0.45} />
+        <planeGeometry args={[W, D]} /><shadowMaterial opacity={0.16} />
       </mesh>
       <Border W={W} D={D} />
 
       {p.zones.map((z) => {
         const [x0, y0] = toWorld(z.x0, z.y0);
         const w = (z.x1 - z.x0 + 1) * c, d = (z.y1 - z.y0 + 1) * c;
-        const st = ZONE_STYLE[z.kind] ?? { color: "#8b7bff", opacity: 0.08 };
+        const st = ZONE_STYLE[z.kind] ?? { color: "#6250d6", opacity: 0.07 };
         return <ZoneMark key={z.name} name={z.name} kind={z.kind} x={x0 + w / 2} z={y0 + d / 2} w={w} d={d} color={st.color} opacity={st.opacity} />;
       })}
       {p.build?.preview && (() => {
         const b = p.build.preview;
         const [x0, y0] = toWorld(Math.min(b.x0, b.x1), Math.min(b.y0, b.y1));
         const w = (Math.abs(b.x1 - b.x0) + 1) * c, d = (Math.abs(b.y1 - b.y0) + 1) * c;
-        return <ZoneMark name="" kind={b.kind} x={x0 + w / 2} z={y0 + d / 2} w={w} d={d} color="#ffffff" opacity={0.18} />;
+        return <ZoneMark name="" kind={b.kind} x={x0 + w / 2} z={y0 + d / 2} w={w} d={d} color={COL.select} opacity={0.18} />;
       })()}
 
       {p.exits.map((e) => <ExitGate key={e.name} e={e} toWorld={toWorld} c={c} cols={cols} rows={rows} />)}
@@ -367,17 +395,17 @@ export default function Floor3D(p: Props) {
       {p.showPower && p.panels.filter((pn) => pn.fed_by && panelsBy[pn.fed_by]).map((pn) => {
         const a = toWorld(pn.x + 0.5, pn.y + 0.5), q = panelsBy[pn.fed_by!], b = toWorld(q.x + 0.5, q.y + 0.5);
         return <Cable key={`f-${pn.name}`} from={[a[0], PANEL_H[pn.kind] ?? 1.2, a[1]]} to={[b[0], PANEL_H[q.kind] ?? 1.2, b[1]]}
-                      color="#b18cff" opacity={0.8} lift={2.5} />;
+                      color={COL.feed} opacity={0.75} lift={2.5} />;
       })}
       {p.showPower && p.items.filter((it) => it.panel && panelsBy[it.panel]).map((it) => {
         const a = toWorld(it.x + it.w / 2, it.y + it.d / 2), q = panelsBy[it.panel!], b = toWorld(q.x + 0.5, q.y + 0.5);
         const sel = it.id === p.selectedId;
         return <Cable key={`c-${it.id}`} from={[a[0], it.h, a[1]]} to={[b[0], PANEL_H[q.kind] ?? 1.2, b[1]]}
-                      color={sel ? "#ffffff" : "#3dd6ff"} opacity={sel ? 1 : 0.45} lift={0.8} />;
+                      color={sel ? COL.select : COL.power} opacity={sel ? 1 : 0.4} lift={0.8} />;
       })}
 
       {p.items.map((it) => {
-        const pos = drag?.id === it.id ? { x: drag.x, y: drag.y } : it;
+        const pos = drag && drag.id === it.id ? { x: drag.x, y: drag.y } : it;
         return (
           <ItemView key={it.id} it={it} t={types[it.type]} c={c} toWorld={toWorld} pos={pos}
                     selected={it.id === p.selectedId} changed={p.changedIds.has(it.id)} failing={failing.has(it.id)}
@@ -393,14 +421,14 @@ export default function Floor3D(p: Props) {
       })}
 
       {pathList.map((x) => (
-        <Ribbon key={`p-${x.id}`} points={x.pts} color={x.sel ? "#5ad1ff" : "#2a8cff"} width={x.sel ? 0.28 : 0.14}
-                opacity={x.sel ? 1 : 0.45} speed={x.sel ? 1.6 : 0.8} />
+        <Ribbon key={`p-${x.id}`} points={x.pts} color={x.sel ? COL.select : COL.exit} width={x.sel ? 0.28 : 0.14}
+                opacity={x.sel ? 1 : 0.55} speed={x.sel ? 1.6 : 0.8} />
       ))}
 
       {p.showHeat && p.suggestion && <Heat s={p.suggestion} toWorld={toWorld} cell={c} />}
       {p.suggestion?.picks.map((pk) => <Beacon key={`b-${pk.rank}`} p={pk} c={c} toWorld={toWorld} onPick={p.onPick} onHover={p.onHover} />)}
       {bestPick && bestPick.path.length > 1 && (
-        <Ribbon points={bestPick.path.map(([x, y]) => toWorld(x + 0.5, y + 0.5))} color="#3dff9a" width={0.22} opacity={0.85} speed={1.8} y={0.07} />
+        <Ribbon points={bestPick.path.map(([x, y]) => toWorld(x + 0.5, y + 0.5))} color={COL.ok} width={0.24} opacity={0.95} speed={1.8} y={0.07} />
       )}
 
       {ghost && p.placing && (
@@ -415,7 +443,12 @@ export default function Floor3D(p: Props) {
           <GhostBox w={ghost.w * c} d={ghost.d * c} h={types[p.placing.type].h} ok={ghostOk} />
         </group>
       )}
-      {p.redCells.length > 0 && <Cells cells={p.redCells} toWorld={toWorld} cell={c} color="#ff2d55" y={0.035} pulse />}
+      {p.redCells.length > 0 && <Cells cells={p.redCells} toWorld={toWorld} cell={c} color={COL.bad} y={0.035} pulse />}
+      {p.showCrowd && p.crowd && p.crowd.length > 0 && <Crowd cells={p.crowd} toWorld={toWorld} cell={c} />}
+      {p.showLine && p.routes?.line.map((r, i) => (
+        <Ribbon key={`l-${i}`} points={r.cells.map(([x, y]) => toWorld(x + 0.5, y + 0.5))} color={COL.line} width={0.2} opacity={0.9} speed={1.4} y={0.08} />))}
+      {p.showFlow && p.routes?.flow.map((r, i) => (
+        <Ribbon key={`f-${i}`} points={r.cells.map(([x, y]) => toWorld(x + 0.5, y + 0.5))} color={COL.flow} width={0.2} opacity={0.85} speed={1.0} y={0.09} />))}
     </Canvas>
   );
 }
@@ -425,10 +458,10 @@ function GhostBox({ w, d, h, ok }: { w: number; d: number; h: number; ok: boolea
   return (
     <>
       <lineSegments geometry={edges} position={[0, h / 2, 0]} raycast={() => null}>
-        <lineBasicMaterial color={ok ? "#3dff9a" : "#ff3b5c"} toneMapped={false} />
+        <lineBasicMaterial color={ok ? COL.ok : COL.bad} toneMapped={false} />
       </lineSegments>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.03, 0]} raycast={() => null}>
-        <planeGeometry args={[w, d]} /><meshBasicMaterial color={ok ? "#3dff9a" : "#ff3b5c"} transparent opacity={0.25} depthWrite={false} />
+        <planeGeometry args={[w, d]} /><meshBasicMaterial color={ok ? COL.ok : COL.bad} transparent opacity={0.25} depthWrite={false} />
       </mesh>
     </>
   );
@@ -444,13 +477,13 @@ function Border({ W, D }: { W: number; D: number }) {
   const wall = useMemo(() => new THREE.ShaderMaterial({
     uniforms: { uTime: TIME },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
-    fragmentShader: `uniform float uTime; varying vec2 vUv; void main(){ float a = (1.0 - vUv.y) * 0.35 * (0.8 + 0.2 * sin(uTime * 1.5 + vUv.x * 40.0)); gl_FragColor = vec4(0.1, 0.75, 1.0, a); }`,
-    transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+    fragmentShader: `uniform float uTime; varying vec2 vUv; void main(){ float a = (1.0 - vUv.y) * 0.22 * (0.85 + 0.15 * sin(uTime * 1.5 + vUv.x * 40.0)); gl_FragColor = vec4(0.16, 0.47, 0.84, a); }`,
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
   }), []);
   const h = 0.9;
   return (
     <>
-      <LineStrip geom={geom} color="#5ad1ff" opacity={1} />
+      <LineStrip geom={geom} color="#5b7fae" opacity={1} />
       {[[0, -D / 2, W, 0], [0, D / 2, W, 0], [-W / 2, 0, D, Math.PI / 2], [W / 2, 0, D, Math.PI / 2]].map(([x, z, len, r], i) => (
         <mesh key={i} position={[x, h / 2, z]} rotation={[0, r, 0]} material={wall} raycast={() => null}>
           <planeGeometry args={[len, h]} />
@@ -486,4 +519,28 @@ function LineStrip({ geom, color, opacity }: { geom: THREE.BufferGeometry; color
   const obj = useMemo(() => new THREE.Line(geom, new THREE.LineBasicMaterial({ color, transparent: true, opacity, toneMapped: false })),
                       [geom, color, opacity]);
   return <primitive object={obj} raycast={() => null} />;
+}
+function Crowd({ cells, toWorld, cell }: { cells: [number, number, number][]; toWorld: (x: number, y: number) => [number, number]; cell: number }) {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const hi = Math.max(...cells.map((c) => c[2]));
+    const m = new THREE.Matrix4();
+    cells.forEach(([x, z, n], i) => {
+      const [wx, wz] = toWorld(x + 0.5, z + 0.5);
+      const h = 0.05 + (n / hi) * 0.6;
+      m.makeScale(1, h, 1).setPosition(wx, h / 2, wz);
+      ref.current!.setMatrixAt(i, m);
+      ref.current!.setColorAt(i, crowdColor(n / hi));
+    });
+    ref.current.count = cells.length;
+    ref.current.instanceMatrix.needsUpdate = true;
+    if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true;
+  }, [cells, toWorld]);
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, cells.length]} key={cells.length} raycast={() => null}>
+      <boxGeometry args={[cell * 0.85, 1, cell * 0.85]} />
+      <meshBasicMaterial transparent opacity={0.75} toneMapped={false} depthWrite={false} />
+    </instancedMesh>
+  );
 }

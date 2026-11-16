@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Floor3D, { type Load, type PathInfo } from "./Floor3D";
 import BuilderPanel, { CELL, blankSpec, useBuild } from "./Builder";
 import ItemMaker from "./ItemMaker";
+import Efficiency, { type Layer } from "./Efficiency";
 import { api, type FloorRow } from "./api";
 import { applyDraft, nextId, size } from "./draft";
 import { shapeOf } from "./models";
@@ -35,7 +36,12 @@ export default function App() {
   const [hover, setHover] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
   const [sugBusy, setSugBusy] = useState(false);
-  const [showPaths, setShowPaths] = useState(false);
+  const [layers, setLayers] = useState<Record<Layer, boolean>>({ paths: false, line: false, flow: false, crowd: false });
+  const showPaths = layers.paths;
+  const setShowPaths = (v: boolean) => setLayers((l) => ({ ...l, paths: v }));
+  const toggleLayer = (k: Layer) => setLayers((l) => ({ ...l, [k]: !l[k] }));
+  const [rightTab, setRightTab] = useState<"efficiency" | "rules">("efficiency");
+  const [history, setHistory] = useState<{ t: number; index: number }[]>([]);
   const [showPower, setShowPower] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
   const [maker, setMaker] = useState(false);
@@ -50,7 +56,7 @@ export default function App() {
   useEffect(() => { refreshStatus(); }, []);
   useEffect(() => {
     setData(null); setChanges([]); setRun(null); setViewAttempt(null); setSelectedId(null); setPlacing(null);
-    setPlaceLine(""); setPlacePanel(""); setSuggestion(null); setMaker(false);
+    setPlaceLine(""); setPlacePanel(""); setSuggestion(null); setMaker(false); setHistory([]);
     api.floor(floorName).then((d) => {
       setData(d);
       if (qs.get("place") && d.item_types.some((t) => t.name === qs.get("place"))) {
@@ -58,9 +64,12 @@ export default function App() {
         setPlaceLine(qs.get("line") ?? "");
       } else if (qs.get("select")) setSelectedId(qs.get("select"));
       if (qs.get("paths")) setShowPaths(true);
+      for (const k of (qs.get("layers") ?? "").split(",")) if (k) setLayers((l) => ({ ...l, [k]: true }));
+      if (qs.get("tab") === "rules") setRightTab("rules");
       if (qs.get("build")) { setSpecState(blankSpec()); setTab("build"); }
       if (qs.get("maker")) setMaker(true);
-      qs.delete("place"); qs.delete("select"); qs.delete("build"); qs.delete("maker");
+      if (qs.get("agent")) { setRequest(qs.get("agent")!); setTab("agent"); setTimeout(() => document.getElementById("run-agent")?.click(), 300); }
+      qs.delete("place"); qs.delete("select"); qs.delete("build"); qs.delete("maker"); qs.delete("agent");
     }).catch((e) => setMessage(String(e)));
     api.replays(floorName).then(setReplays).catch(() => setReplays([]));
   }, [floorName]);
@@ -80,11 +89,29 @@ export default function App() {
   const attempt = run && viewAttempt !== null ? run.attempts[viewAttempt] : null;
   const shownChanges = attempt ? attempt.changes : changes;
   const items = useMemo(() => (data ? applyDraft(data.items, shownChanges, data.item_types) : []), [data, shownChanges]);
-  const changedIds = useMemo(() => new Set(shownChanges.map((c) => c.id)), [shownChanges]);
+
   const shown: Evaluation | null = attempt
     ? { valid: attempt.valid, error: attempt.error, passed: attempt.passed, results: attempt.results,
         failed: attempt.failed, skipped: [], ms: attempt.ms }
     : evalResult ?? data;
+  const changedIds = useMemo(() => {
+    const saved = new Set((data?.items ?? []).map((i) => i.id));
+    return new Set([...shownChanges.map((c) => c.id).filter(Boolean), ...items.filter((i) => !saved.has(i.id)).map((i) => i.id)]);
+  }, [shownChanges, items, data]);
+  // Agent attempts carry no metrics; measure the viewed attempt as a draft (rolled back on the server).
+  const [attemptMetrics, setAttemptMetrics] = useState<Evaluation["metrics"]>(undefined);
+  useEffect(() => {
+    setAttemptMetrics(undefined);
+    if (!attempt || !attempt.valid) return;
+    let live = true;
+    api.evaluate(floorName, attempt.changes).then((r) => { if (live) setAttemptMetrics(r.metrics); }).catch(() => {});
+    return () => { live = false; };
+  }, [attempt, floorName]);
+  const metrics = attempt ? attemptMetrics : (shown?.metrics ?? data?.metrics);
+  useEffect(() => {
+    if (attempt || metrics?.index == null) return;
+    setHistory((h) => (h.length && h[h.length - 1].index === metrics.index && changes.length) ? h : [...h.slice(-39), { t: Date.now(), index: metrics.index! }]);
+  }, [metrics]);
   const redCells = useMemo(() => (shown?.results ?? []).filter((r) => r.status === "fail").flatMap((r) => r.cells), [shown]);
   const editable = !attempt && tab !== "build";
   const selected = items.find((i) => i.id === selectedId) ?? null;
@@ -316,7 +343,7 @@ export default function App() {
                 {replays.length > 0 && (
                   <p className="hint">Recorded runs (work with no API key):{" "}
                     {replays.map((r) => <a key={r.request} onClick={() => setRequest(r.request)}>{r.request}</a>)}</p>)}
-                <button className="primary" disabled={!!busy || !request.trim()} onClick={() => runAgent(false)}>Propose layouts</button>
+                <button id="run-agent" className="primary" disabled={!!busy || !request.trim()} onClick={() => runAgent(false)}>Propose layouts</button>
                 {run && <Attempts run={run} view={viewAttempt} onView={setViewAttempt} onAccept={acceptAttempt} />}
               </>
             )}
@@ -333,6 +360,8 @@ export default function App() {
                  placing={editable ? placing : null} redCells={building ? [] : redCells} editable={editable}
                  loads={building ? [] : loads} paths={building ? {} : paths}
                  showPaths={showPaths} showPower={showPower} showHeat={showHeat} suggestion={building ? null : suggestion}
+                 routes={building ? null : metrics?.routes} crowd={building ? null : metrics?.crowd}
+                 showLine={layers.line} showFlow={layers.flow} showCrowd={layers.crowd}
                  build={building ? build.hooks : undefined}
                  onSelect={(id) => { setSelectedId(id); if (id) setPlacing(null); }} onPlace={place}
                  onMove={(id, x, y) => push({ op: "move", id, x, y })} onHover={setHover} onPick={applyPick} />
@@ -345,6 +374,7 @@ export default function App() {
             </div>
             <div className="stat"><small>items</small><b>{items.length}</b></div>
             <div className="stat"><small>longest walk</small><b>{maxWalk.toFixed(1)} m</b></div>
+            {metrics?.index != null && <div className="stat eff-stat"><small>efficiency</small><b>{metrics.index}</b></div>}
             {mainLoad !== undefined && <div className={`stat ${mainLoad > 1 ? "bad" : mainLoad > 0.85 ? "warn" : ""}`}><small>main load</small><b>{Math.round(mainLoad * 100)}%</b></div>}
           </div>
         )}
@@ -353,6 +383,9 @@ export default function App() {
             <button className={showHeat ? "on" : ""} onClick={() => setShowHeat(!showHeat)}>▦ Best-spot map</button>
             <button className={showPaths ? "on" : ""} onClick={() => setShowPaths(!showPaths)}>⇢ Exit paths</button>
             <button className={showPower ? "on" : ""} onClick={() => setShowPower(!showPower)}>⚡ Power links</button>
+            <button className={layers.line ? "on" : ""} onClick={() => toggleLayer("line")}><i className="sw" style={{ background: "#eb6834" }} />Line routes</button>
+            <button className={layers.flow ? "on" : ""} onClick={() => toggleLayer("flow")}><i className="sw" style={{ background: "#6250d6" }} />Material flow</button>
+            <button className={layers.crowd ? "on" : ""} onClick={() => toggleLayer("crowd")}><i className="sw" style={{ background: "#c2410c" }} />Crowding</button>
           </div>
         )}
         {building && <div className="hud build-hud"><b>BUILD MODE</b><small>{build.cols} × {build.rows} cells · {spec.width_m} × {spec.depth_m} m</small></div>}
@@ -375,6 +408,20 @@ export default function App() {
               ...(spec.lines.length ? ["Line flow"] : [])].map((r) => <div key={r} className="check skipped"><b>{r}</b></div>)}
           </>
         ) : (
+          <>
+            <div className="tabs right-tabs">
+              <button className={rightTab === "efficiency" ? "on" : ""} onClick={() => setRightTab("efficiency")}>Efficiency</button>
+              <button className={rightTab === "rules" ? "on" : ""} onClick={() => setRightTab("rules")}>
+                Safety rules {shown?.passed ? <span className="pill ok">✓</span> : <span className="pill bad">{nFail}</span>}</button>
+            </div>
+          </>
+        )}
+        {!building && rightTab === "efficiency" && (
+          <>
+            {attempt && <p className="hint">Attempt {attempt.round}.{attempt.index} compared with the saved floor.</p>}
+            <Efficiency m={metrics} base={data.metrics} history={history} layers={layers} onLayer={toggleLayer} />
+          </>)}
+        {!building && rightTab === "rules" && (
           <>
             <h3>Checks {shown?.passed ? <span className="ok">all pass</span> : <span className="bad">failed</span>}
               <small> {shown?.ms?.toFixed(0)} ms</small></h3>

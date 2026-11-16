@@ -8,7 +8,10 @@ export function size(t: { w: number; d: number }, rotation: number): [number, nu
 export function applyDraft(items: Item[], changes: Change[], types: ItemType[]): Item[] {
   const byType = Object.fromEntries(types.map((t) => [t.name, t]));
   const map = new Map(items.map((i) => [i.id, { ...i }]));
-  for (const c of changes) {
+  let anon = 0;
+  for (const raw of changes) {
+    // Agent proposals may add items with no id; give them a display id so they can be drawn and keyed.
+    const c = raw.op === "add" && !raw.id ? { ...raw, id: `new${++anon}` } : raw;
     if (c.op === "add") {
       const t = byType[c.type];
       if (!t) continue;

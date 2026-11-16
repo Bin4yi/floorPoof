@@ -21,9 +21,10 @@ void main(){
   float major = gridLine(g / 10.0, 1.4);
   float scan = exp(-pow((vUv.x - fract(uTime * 0.04)) * 30.0, 2.0));
   vec2 c = vUv - 0.5; float vig = 1.0 - dot(c, c) * 0.9;
-  vec3 base = vec3(0.016, 0.035, 0.065) * vig;
-  vec3 col = base + vec3(0.0, 0.42, 0.62) * minor * 0.28 + vec3(0.1, 0.75, 1.0) * major * 0.55
-           + vec3(0.0, 0.5, 0.8) * scan * 0.10;
+  vec3 col = vec3(0.975, 0.982, 0.992) * (0.97 + 0.03 * vig);
+  col = mix(col, vec3(0.80, 0.85, 0.91), minor * 0.55);
+  col = mix(col, vec3(0.45, 0.62, 0.85), major * 0.55);
+  col = mix(col, vec3(0.55, 0.75, 1.0), scan * 0.10);
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -47,16 +48,15 @@ void main(){
   float d = vUv.x * uLen;
   float pulse = smoothstep(0.55, 1.0, fract(d * 0.45 - uTime * uSpeed));
   float edge = 1.0 - abs(vUv.y - 0.5) * 2.0;
-  float a = uOpacity * (0.3 + 0.7 * pulse) * (0.4 + 0.6 * edge);
-  gl_FragColor = vec4(uColor * (0.7 + 0.8 * pulse), a);
+  float a = uOpacity * (0.55 + 0.45 * pulse) * (0.5 + 0.5 * edge);
+  gl_FragColor = vec4(mix(uColor, vec3(1.0), pulse * 0.35), a);
 }`;
 
 export function flowMaterial(color: string, len: number, opacity = 0.9, speed = 1.2) {
   return new THREE.ShaderMaterial({
     uniforms: { uColor: { value: new THREE.Color(color) }, uTime: TIME, uLen: { value: len },
                 uSpeed: { value: speed }, uOpacity: { value: opacity } },
-    vertexShader: flowVert, fragmentShader: flowFrag, transparent: true, depthWrite: false,
-    blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    vertexShader: flowVert, fragmentShader: flowFrag, transparent: true, depthWrite: false, side: THREE.DoubleSide,
   });
 }
 
@@ -120,12 +120,11 @@ function textTexture(text: string, color: string, bg: boolean) {
   c.width = w; c.height = 72;
   ctx.font = font;
   if (bg) {
-    ctx.fillStyle = "rgba(4,12,24,0.78)";
+    ctx.fillStyle = "rgba(255,255,255,0.94)";
     ctx.strokeStyle = color; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.roundRect(2, 2, w - 4, 68, 14); ctx.fill(); ctx.stroke();
   }
-  ctx.fillStyle = color; ctx.textBaseline = "middle"; ctx.textAlign = "center";
-  ctx.shadowColor = color; ctx.shadowBlur = 12;
+  ctx.fillStyle = bg ? "#0f172a" : color; ctx.textBaseline = "middle"; ctx.textAlign = "center";
   ctx.fillText(text, w / 2, 38);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -163,7 +162,10 @@ export function outlineGeometry(w: number, h: number, d: number) {
 }
 
 export function heatColor(t: number): THREE.Color {
-  // violet -> cyan -> green
-  const a = new THREE.Color("#5b2bd6"), b = new THREE.Color("#00d8ff"), c = new THREE.Color("#3dff9a");
-  return t < 0.5 ? a.lerp(b, t * 2) : b.clone().lerp(c, (t - 0.5) * 2);
+  // one hue, light to dark: better spots are darker blue
+  return new THREE.Color("#c7dcf7").lerp(new THREE.Color("#1d4fb8"), Math.max(0, Math.min(1, t)));
+}
+
+export function crowdColor(t: number): THREE.Color {
+  return new THREE.Color("#fcd9a8").lerp(new THREE.Color("#c2410c"), Math.max(0, Math.min(1, t)));
 }

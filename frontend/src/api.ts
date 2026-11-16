@@ -8,6 +8,9 @@ async function call<T>(path: string, body?: unknown, method?: string): Promise<T
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
     const d = (data as any).detail;
+    if (r.status === 404 && d === "Not Found")
+      throw new Error("The server is older than this page. Stop it and run .\\scripts\\run.ps1 again.");
+    if (r.status === 405) throw new Error("The server is older than this page. Restart it with .\\scripts\\run.ps1.");
     throw new Error(typeof d === "string" ? d : d?.message ? `${d.message} ${d.failed ? d.failed.join(", ") : ""}` : r.statusText);
   }
   return data as T;

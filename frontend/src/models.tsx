@@ -25,17 +25,16 @@ interface Mats { body: THREE.Material; dark: THREE.Material; accent: THREE.Mater
 function useMats(color: string, look: Look, heat: boolean): Mats {
   return useMemo(() => {
     if (look !== "normal") {
-      const c = look === "ghost-ok" ? "#3dff9a" : "#ff3b5c";
+      const c = look === "ghost-ok" ? "#12b76a" : "#e34948";
       const holo = new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.28, depthWrite: false });
       return { body: holo, dark: holo, accent: holo, glow: holo, metal: holo };
     }
     const col = new THREE.Color(color);
     return {
-      body: new THREE.MeshStandardMaterial({ color: col.clone().multiplyScalar(0.35).lerp(new THREE.Color("#1a2536"), 0.5),
-                                             metalness: 0.65, roughness: 0.35 }),
-      dark: new THREE.MeshStandardMaterial({ color: "#0d141f", metalness: 0.8, roughness: 0.4 }),
-      metal: new THREE.MeshStandardMaterial({ color: "#5c6b80", metalness: 0.9, roughness: 0.25 }),
-      accent: new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.55, metalness: 0.3, roughness: 0.4 }),
+      body: new THREE.MeshStandardMaterial({ color: col.clone().lerp(new THREE.Color("#f4f7fb"), 0.78), metalness: 0.15, roughness: 0.45 }),
+      dark: new THREE.MeshStandardMaterial({ color: "#3b4658", metalness: 0.4, roughness: 0.5 }),
+      metal: new THREE.MeshStandardMaterial({ color: "#a3afbf", metalness: 0.6, roughness: 0.3 }),
+      accent: new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.18, metalness: 0.2, roughness: 0.45 }),
       glow: new THREE.MeshBasicMaterial({ color: heat ? "#ff7a3d" : col.clone().lerp(new THREE.Color("#ffffff"), 0.35),
                                           toneMapped: false }),
     };

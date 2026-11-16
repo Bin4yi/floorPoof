@@ -20,6 +20,7 @@ export interface CheckResult {
   data: Record<string, any>; ms: number; title: string; source_url: string | null; source_note: string;
 }
 export interface Evaluation {
+  metrics?: Metrics;
   valid: boolean; error: string | null; passed: boolean; results: CheckResult[]; failed: string[]; skipped: string[]; ms: number;
 }
 export interface FloorInfo {
@@ -57,4 +58,16 @@ export interface FloorSpec {
   exits: Exit[]; zones: Zone[]; panels: Panel[]; lines: { name: string; direction: string }[];
   rules: { exit_distance_m?: number | null; exit_distance_source?: string; forklift_aisle_m?: number | null; forklift_aisle_source?: string };
   items?: { id: string; type: string; x: number; y: number; rotation: number; panel: string | null; line: string | null; seq: number | null }[];
+}
+export interface Metrics {
+  index: number | null;
+  aspects: Record<string, number | null>;
+  kpi: { workers: number; evac_mean_m: number | null; evac_max_m: number | null; line_travel_m: number; material_m: number;
+         busiest_cell: number; elbow_mean: number | null; walkable_pct: number };
+  walks: number[]; elbow: Record<string, number>;
+  lines: { name: string; m: number; steps: number; blocked: number }[];
+  flows: { name: string; m: number; trips: number }[];
+  routes: { line: { line: string; a: string; b: string; m: number; cells: [number, number][] }[];
+            flow: { flow: string; a: string; b: string; m: number; cells: [number, number][] }[] };
+  crowd: [number, number, number][]; limit_m: number; evac_basis: string; span_m: number; ms: number;
 }

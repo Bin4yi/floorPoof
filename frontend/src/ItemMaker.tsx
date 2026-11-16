@@ -23,12 +23,12 @@ export function Preview({ draft }: { draft: ItemDraft }) {
       <Canvas camera={{ position: [s * 1.3, s * 1.0, s * 1.5], fov: 40 }} dpr={[1, 2]}>
         <Clock />
         <ambientLight intensity={0.5} />
-        <hemisphereLight args={["#6fd6ff", "#1a0f3a", 0.7]} />
+        <hemisphereLight args={["#ffffff", "#c9d6e6", 0.8]} />
         <directionalLight position={[3, 6, 4]} intensity={1.2} />
         <group position={[0, -draft.h_m / 2, 0]}>
           <Spin><ItemModel t={t} W={draft.w_m} D={draft.d_m} H={draft.h_m} /></Spin>
           <mesh rotation-x={-Math.PI / 2}><ringGeometry args={[s * 0.75, s * 0.8, 48]} />
-            <meshBasicMaterial color="#5ad1ff" transparent opacity={0.6} /></mesh>
+            <meshBasicMaterial color="#2a78d6" transparent opacity={0.6} /></mesh>
         </group>
       </Canvas>
     </div>
