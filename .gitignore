@@ -10,3 +10,10 @@ frontend/dist/
 spikes/try_*.py
 docs/reproduce.json
 frontend/tsconfig.tsbuildinfo
+
+# Local submission notes, not part of the project
+DEVPOST.md
+SUBMISSION-CHECKLIST.md
+YOUTUBE.md
+FloorProof*Project Doc.md
+DEVPOST-ABOUT.md
