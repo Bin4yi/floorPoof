@@ -156,7 +156,21 @@ layout. Force replay even with a key:
   proven by the full graph checks in a rolled-back draft. Click a beacon or press its number to use it. The green
   ribbon is the walk from that spot to the nearest exit. Exit paths come from the same `shortestPath` query that
   the exit checks use. The scan only suggests; pass or fail still comes from the checks.
-- Deep links for demos: `/?floor=warehouse&place=pallet_rack&rot=90`, `/?select=R1&paths=1`, `/?build=1`.
+- **Worker efficiency.** Besides the rule checks, every floor and every draft is measured on the graph
+  (`backend/metrics.py`). These are measurements, not rules, so nothing passes or fails on them. They cover:
+  - the walk to the nearest exit;
+  - the walk between consecutive line stations (`FEEDS`, then `shortestPath`);
+  - the walk along material flows (`(ItemType)-[:FLOWS_TO]->(ItemType)`, data in the pack, e.g. fabric rack to
+    cutting table);
+  - crowding: how many operators' exit routes share the busiest cell;
+  - elbow room: free cells within two `NEIGHBOR` hops of each work position;
+  - power headroom and open floor area.
+
+  Each aspect also has a 0-100 index, with its formula shown in the app. The Efficiency tab shows a radar of the
+  draft against the saved floor, a live trend after each change, metric tiles showing the change from the saved
+  floor, and bar charts and a histogram. Each chart can show its routes or hot spots on the 3D floor.
+- Deep links for demos: `/?floor=warehouse&place=pallet_rack&rot=90`, `/?select=R1&paths=1&layers=line,flow,crowd`,
+  `/?build=1`, `/?agent=Add 4 pressing machines to Line B`.
 
 In the app, the **Ask the agent** tab lists the recorded requests you can run without a key. **Manual edit**
 needs no model at all: pick an item, click the floor, drag to move, R to rotate, Delete to remove. Every change
