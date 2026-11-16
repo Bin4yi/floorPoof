@@ -100,3 +100,17 @@ def test_parse_text_reads_sizes_and_power():
     assert d["label"] == "Industrial dryer" and d["heat"] and d["assumed"] == []
     d = parse_text("steam press 1200 x 800 mm 900 W")
     assert (d["w_m"], d["d_m"], d["kw"]) == (1.2, 0.8, 0.9) and "h_m" in d["assumed"]
+
+
+def test_efficiency_metrics_move_with_the_layout(g):
+    from backend.metrics import compute
+    base = compute(g, "factory", run_checks(g, "factory"))
+    assert set(base["aspects"]) == {"evacuation", "travel", "crowding", "elbow_room", "power", "openness"}
+    assert all(0 <= v <= 100 for v in base["aspects"].values() if v is not None)
+    assert len(base["lines"]) == 4 and base["flows"] and base["kpi"]["workers"] == 42
+    # Moving the fabric racks far from the cutting tables makes material travel longer.
+    far = [{"op": "move", "id": r, "x": 1, "y": y} for r, y in (("R1", 24), ("R2", 27), ("R3", 30), ("R4", 34))]
+    ev = evaluate(g, "factory", far, metrics=True)
+    fab = lambda m: next(f["m"] for f in m["flows"] if f["name"] == "Fabric to cutting")
+    assert fab(ev["metrics"]) != fab(base)
+    assert evaluate(g, "factory", [], metrics=False).get("metrics") is None

@@ -112,6 +112,17 @@ def add_item_type(g: Graph, floor: str, spec: dict) -> dict:
 
 
 # ---------------------------------------------------------------- floors
+def _library_flows(names: set[str]) -> list[dict]:
+    out, seen = [], set()
+    for p in PACK_FILES.values():
+        if p.exists():
+            for fl in load_pack(p).get("flows", []):
+                if fl["from"] in names and fl["to"] in names and fl["name"] not in seen:
+                    seen.add(fl["name"])
+                    out.append(fl)
+    return out
+
+
 def _library_types() -> list[dict]:
     """Every built-in item type, offered on custom floors too."""
     seen, out = set(), []
@@ -280,7 +291,7 @@ def build_pack(spec: dict, *, existing: set[str] = frozenset(), editing: bool = 
                   "data_note": "Custom floor drawn by the user."},
         "pack": {"name": f"custom-{name}", "label": f"Custom: {str(spec.get('industry') or label)[:40]}"},
         "exits": exits, "zones": zones, "panels": panels, "lines": lines,
-        "item_types": types, "separations": [], "items": items,
+        "item_types": types, "separations": [], "items": items, "flows": _library_flows(tnames),
         "rules": _rules(prefix, spec, bool(panels), bool(lines)),
         "user_rules": spec.get("rules") or {},
     }

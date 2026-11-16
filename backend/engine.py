@@ -22,7 +22,8 @@ class NotProven(Exception):
         super().__init__("layout does not pass the checks")
 
 
-def evaluate(g: Graph, floor: str, changes: list[dict]) -> dict:
+def evaluate(g: Graph, floor: str, changes: list[dict], metrics: bool = False) -> dict:
+    """metrics=True also measures worker efficiency on the draft (backend/metrics.py)."""
     def go(tx: Graph) -> dict:
         t0 = time.perf_counter()
         try:
@@ -32,8 +33,12 @@ def evaluate(g: Graph, floor: str, changes: list[dict]) -> dict:
                     "skipped": [], "ms": 0.0}
         write_ms = (time.perf_counter() - t0) * 1000
         results = run_checks(tx, floor)
-        return {"valid": True, "error": None, "results": results, "placed": applied["placed"],
-                "write_ms": round(write_ms, 2), **summary(results)}
+        out = {"valid": True, "error": None, "results": results, "placed": applied["placed"],
+               "write_ms": round(write_ms, 2), **summary(results)}
+        if metrics:
+            from .metrics import compute
+            out["metrics"] = compute(tx, floor, results)
+        return out
 
     return g.draft(go)
 

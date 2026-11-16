@@ -121,7 +121,9 @@
  ],
  "panels": [
   {
-   "name": "MAIN", "kind": "main_breaker", "capacity_kw": 62,
+   "name": "MAIN",
+   "kind": "main_breaker",
+   "capacity_kw": 62,
    "fed_by": null,
    "x": 99,
    "y": 39
@@ -701,6 +703,30 @@
    "status": "partial",
    "source_url": null,
    "source_note": "Process rule: each step sits further along the line direction than the one before. Maximum distance between steps: TBD."
+  }
+ ],
+ "flows": [
+  {
+   "name": "Fabric to cutting",
+   "from": "fabric_rack",
+   "to": "cutting_table"
+  },
+  {
+   "name": "Cutting to lines",
+   "from": "cutting_table",
+   "to": "sewing_machine",
+   "to_role": "head"
+  },
+  {
+   "name": "Lines to pressing",
+   "from": "sewing_machine",
+   "from_role": "tail",
+   "to": "pressing_machine"
+  },
+  {
+   "name": "Pressing to packing",
+   "from": "pressing_machine",
+   "to": "packing_table"
   }
  ]
 }

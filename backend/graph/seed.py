@@ -91,12 +91,31 @@ def seed_pack(g: Graph, pack: dict) -> None:
                MATCH (t:ItemType {pack:$pack}) WHERE t.name IN [$a, $b]
                MERGE (r)-[:APPLIES_TO]->(t)""", {"pack": pk["name"], "a": s["from"], "b": s["to"]})
 
+    seed_flows(g, pack)
+
     # Items
     types = {t["name"]: t for t in pack["item_types"]}
     place_items(g, f, pk["name"], [_prepare(it, types[it["type"]]) for it in pack.get("items", [])])
     refresh_cells(g, f, None)
     for line in pack.get("lines", []):
         rebuild_feeds(g, f, line["name"])
+
+
+def seed_flows(g: Graph, pack: dict) -> None:
+    """Material flows between item types (used by the efficiency metrics, not by the rules)."""
+    flows = [{"from_role": None, "to_role": None, **fl} for fl in pack.get("flows", [])]
+    if flows:
+        g.q("""UNWIND $fl AS fl
+               MATCH (a:ItemType {pack:$pack, name:fl.from}), (b:ItemType {pack:$pack, name:fl.to})
+               MERGE (a)-[r:FLOWS_TO {name:fl.name}]->(b)
+               SET r.from_role = fl.from_role, r.to_role = fl.to_role""", {"pack": pack["pack"]["name"], "fl": flows})
+
+
+def ensure_flows(g: Graph) -> None:
+    """Add the material flows to a store built before flows existed. Safe to run again."""
+    for p in PACK_FILES.values():
+        if p.exists():
+            seed_flows(g, load_pack(p))
 
 
 def seed(g: Graph, names: list[str], *, user_files: bool = False) -> None:

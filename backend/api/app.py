@@ -18,7 +18,8 @@ from ..graph.db import Graph
 from ..agent.describe import describe
 from ..graph.custom import SpecError, add_item_type, floor_spec, is_custom, remove_floor, save_floor
 from ..graph.layout import LayoutError
-from ..graph.seed import PACK_FILES, seed
+from ..graph.seed import PACK_FILES, ensure_flows, seed
+from ..metrics import compute as compute_metrics
 from ..suggest import suggest
 
 STATE: dict = {}
@@ -35,6 +36,8 @@ async def lifespan(_app: FastAPI):
     g = Graph(str(store))
     if fresh:
         seed(g, [n for n, p in PACK_FILES.items() if p.exists()], user_files=True)
+    else:
+        ensure_flows(g)
     STATE["g"] = g
     yield
     g.close()
@@ -92,6 +95,7 @@ def _floor_payload(g: Graph, floor: str) -> dict:
                                r.source_url AS source_url, r.source_note AS source_note ORDER BY id""", p),
         "items": items,
         "results": results,
+        "metrics": compute_metrics(g, floor, results),
         **summary(results),
     }
 
@@ -116,7 +120,7 @@ def floor(floor: str) -> dict:
 @app.post("/api/evaluate")
 def api_evaluate(body: Changes) -> dict:
     """Test a draft. The draft is written in a transaction that is always rolled back."""
-    return evaluate(graph(), body.floor, body.changes)
+    return evaluate(graph(), body.floor, body.changes, metrics=True)
 
 
 @app.post("/api/accept")

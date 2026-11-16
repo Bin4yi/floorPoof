@@ -325,5 +325,12 @@
    "source_url": null,
    "source_note": "Minimum distance between oxidizer and flammable liquid pallets: no source yet (TBD)."
   }
+ ],
+ "flows": [
+  {
+   "name": "Racks to packing",
+   "from": "pallet_rack",
+   "to": "packing_bench"
+  }
  ]
 }
