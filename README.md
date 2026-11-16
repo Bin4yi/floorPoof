@@ -20,12 +20,12 @@ Output of `.\scripts\py.ps1 scripts/reproduce.py --mode replay` (replays the rec
 Part 1: planted-bug layouts
   unsafe layouts blocked: 18 of 20, safe layouts wrongly blocked: 0 of 10
   not counted as blocked, rule number TBD: 2 (u16_sep_press_by_racks, u17_sep_press_moved)
-  check time per layout: mean 228 ms, max 338 ms
+  check time per layout: mean 368 ms, max 505 ms
 
 Part 2: change requests through the full loop
   requests run: 30 of 30 (model answers: replay)
   passed on the first round: 26, passed after retries: 3, never solved: 1
-  average check time per layout: 187 ms over 81 layouts
+  average check time per layout: 311 ms over 81 layouts
   NEVER r15_factory "Add 5 pressing machines anywhere on the floor": handed back to the user with the open problems: FP-PANEL: sub panel SUB-N 26.8 kW > limit 24.0 kW; main breaker MAIN 53.6 kW > limit 49.6 kW.
 
 Part 3: model alone against model plus checks (same requests)
@@ -66,6 +66,35 @@ rules, every proposal and every check result.
   (`backend/packs/warehouse.json`), with no new engine code. Floors drawn in the app become packs the same way.
 - **Why Relate:** one embedded file, no server, openCypher with real path search, and transactions with
   rollback. That fits a planning tool you can hand to someone as a single file.
+
+More of Relate in FloorProof:
+
+- **Vector search as agent memory.** Every proposal stores a vector of its request text on its `Proposal` node.
+  A vector index (`proposal_request`, filtered by floor) lets the agent find proven layouts for similar past
+  requests with `SEARCH p IN (VECTOR INDEX ... )`, and they go into its prompt as hints. The vectors are hashed
+  words and word pairs, with no embedding model and no network call (`backend/memory.py`). The Ask the agent tab
+  shows the matches as you type. `reproduce.py` and the tests run with memory off, so their prompts stay as
+  recorded.
+- **Relate in the browser (WebAssembly).** The **Graph explorer** view loads the floor graph into
+  `@relate/relate-wasm` inside the browser tab, about 4,000 nodes and 16,000 links. Every Cypher query there runs
+  locally, with no server call. Results show as a table and as a graph you can drag, zoom and expand (nodes can sit
+  at their floor positions). The 7 MB `.wasm` file loads only when you open the explorer.
+- **Agent-ready results.** Each check shows the Cypher it ran, with Relate's own timing (parse, plan, run) and any
+  engine notices. **Run in browser** sends that query to the explorer. Relate's notice about an unbounded
+  `FED_BY*0..` led us to bound it (`*0..8`).
+- **MCP for coding agents.** `.mcp.json` starts Relate's own MCP server on `floorproof.rl`, read-only
+  (`relate serve --mcp stdio --read-only`). Claude Code or any other MCP client gets `read_cypher` and `get_schema`
+  on the live floor graph. The CLI comes from the signed release (checksum and SSH signature checked). On this
+  machine Smart App Control blocks the unsigned Windows `relate.exe`, so `.mcp.json` runs the Linux CLI in WSL:
+
+  ```powershell
+  # inside WSL, once: download relate-linux-amd64 from the v1.0.1 release, check it against SHA256SUMS, then
+  wsl -d Ubuntu -- bash -lc "install -m 755 relate-linux-amd64 ~/.local/bin/relate && relate --version"
+  ```
+- **The Relate agent skill** is in `.claude/skills/relate` (the bundle that ships with `relate-db`), so a coding
+  agent that opens this repo knows the Python API. `relate skill install --agent claude-code` does the same for
+  your own agent.
+- Not used: Bolt and HTTP serving, and Neo4j pull and push. They need a Neo4j setup this project does not have.
 
 Notes from testing Relate on day 1, including timings and one bug we found, are in
 [docs/relate-notes.md](docs/relate-notes.md).

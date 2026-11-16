@@ -2,7 +2,7 @@
 Part 1: planted-bug layouts
   unsafe layouts blocked: 18 of 20, safe layouts wrongly blocked: 0 of 10
   not counted as blocked, rule number TBD: 2 (u16_sep_press_by_racks, u17_sep_press_moved)
-  check time per layout: mean 228 ms, max 338 ms
+  check time per layout: mean 368 ms, max 505 ms
   part 2 r01_factory: first_round
   part 2 r02_factory: first_round
   part 2 r03_factory: first_round
@@ -37,7 +37,7 @@ Part 1: planted-bug layouts
 Part 2: change requests through the full loop
   requests run: 30 of 30 (model answers: replay)
   passed on the first round: 26, passed after retries: 3, never solved: 1
-  average check time per layout: 187 ms over 81 layouts
+  average check time per layout: 311 ms over 81 layouts
   NEVER r15_factory "Add 5 pressing machines anywhere on the floor": handed back to the user with the open problems: FP-PANEL: sub panel SUB-N 26.8 kW > limit 24.0 kW; main breaker MAIN 53.6 kW > limit 49.6 kW.
 
 Part 3: model alone against model plus checks (same requests)
@@ -50,4 +50,4 @@ Part 3: model alone against model plus checks (same requests)
   model plus checks: 29 of 30 final layouts proven by the graph checks, 29 of 30 proven and doing what was asked; the rest handed back to the user
   every layout shown by model plus checks passed the checks; unchecked, the model alone would have shown 5 rule-breaking layouts
 
-reproduce.py finished in 71 s
+reproduce.py finished in 104 s

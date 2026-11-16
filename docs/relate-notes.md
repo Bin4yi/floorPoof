@@ -143,3 +143,24 @@ Control seems to allow it now). `scripts/py.ps1` uses native Windows Python when
 - [x] This file
 
 Scripts: `spikes/day1/native_test.py`, `native_heavy.py`, `wasm_test.mjs`, `wasm_build_test.mjs`.
+
+## Later findings (16 Nov 2026)
+
+- **CLI on Windows:** Smart App Control blocks the unsigned `relate-windows-amd64.exe` ("An Application Control
+  policy has blocked this file"), like `_native.pyd` on day 1. The Linux binary in WSL works. We checked the
+  release ourselves: `SHA256SUMS.sig` verifies with `ssh-keygen -Y verify -n relate-release` against the key
+  pinned in `install.sh`, and the binary matches its SHA-256 line.
+- **MCP:** `relate serve --mcp stdio --database floorproof.rl --read-only` works on the `.rl` file written by the
+  Windows Python client, from WSL (`/mnt/c/...`). Tools: `read_cypher`, `get_schema`. Results carry timings and
+  notices with remedies (it flagged our unbounded `FED_BY*0..`).
+- **Seeding speed:** `UNWIND $pairs AS p MATCH (a:Cell {floor:$f, x:p.ax, y:p.ay}), (b:Cell {...})` did not use the
+  composite index `(floor, x, y)`: 26 s for 7,860 links. A one-property key index (`Cell.key = "floor:x:y"`) with
+  `MATCH (a:Cell {key:p.a}) MATCH (b:Cell {key:p.b})` takes 1.4 s. Splitting into two MATCH clauses on the
+  composite index was slower still (28 s).
+- **Vector search:** `CREATE VECTOR INDEX ... WITH [p.floor, p.status]` plus
+  `SEARCH p IN (VECTOR INDEX ... FOR vector($q, 256, FLOAT32) WHERE p.floor = $f LIMIT k) SCORE AS score` works from
+  Python; a status change after indexing is seen by the filter.
+- **WASM:** `init({ module_or_path: wasmUrl })` with Vite's `?url` import works. Loading 4,082 nodes and 15,722
+  links with grouped `UNWIND ... CREATE` (label-specific `_k` index for the link MATCH) is quick enough to do on open.
+  Envelope rows give nodes as `{kind:"node", id, labels, properties}`, links as `{kind:"relationship", start_node,
+  end_node, type}` and paths as alternating arrays.
